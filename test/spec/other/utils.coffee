@@ -132,6 +132,7 @@ describe 'Utils', () ->
     expect(Utils.hostIsAllowed host, host, no).toBe no
     expect(Utils.hostIsAllowed host, whitelist, no).toBe no
     expect(Utils.hostIsAllowed 'http://guides.neo4j.com', whitelist, no).toBe yes
+    expect(Utils.hostIsAllowed 'http://localhost:8080', whitelist, no).toBe yes
 
   it 'should merge two arrays with documents without duplicates', ->
     arr1 = [getDocument('MATCH (n) RETURN n'), getDocument('//My script\nRETURN "me"')]

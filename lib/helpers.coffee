@@ -143,6 +143,11 @@ class neo.helpers
       string.replace(/(\s+(ng|data|x)[^\s=]*\s*=\s*("[^"]*"|'[^']*'|[\w\-.:]+\s*))/ig, '')
 
     @hostIsAllowed = (hostname, whitelist, is_enterprise) ->
+
+      host_without_port = document.createElement('a')
+      host_without_port.setAttribute('href', hostname)
+      hostname = host_without_port.protocol + '//' + host_without_port.hostname
+
       return true if is_enterprise and (not whitelist or whitelist is '*')
       whitelisted_hosts = if is_enterprise then whitelist.split(",") else ['http://guides.neo4j.com', 'https://guides.neo4j.com', 'http://localhost', 'https://localhost']
       hostname in whitelisted_hosts     
