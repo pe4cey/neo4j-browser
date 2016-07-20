@@ -52,5 +52,9 @@ angular.module('neo4jApp.services')
         getVersionService: (useBolt = Settings.useBolt) ->
           return UtilityBolt if useBolt
           return UtilityREST
+
+        getStoredProceduresService: (useBolt = Settings.useBolt) ->
+          return UtilityBolt if useBolt
+          return UtilityREST
       }
 ]

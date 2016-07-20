@@ -45,6 +45,16 @@ angular.module('neo4jApp.services')
           ).catch( (e) -> q.reject Bolt.constructResult e)
           q.promise
 
+        getStoredProceduresList: ->
+          q = $q.defer()
+          Bolt.boltTransaction(
+            "CALL dbms.procedures() YIELD name"
+          ).promise.then((result) ->
+            return q.resolve(null) unless result.records.length
+            q.resolve(Bolt.constructStoredProcedure result)
+          ).catch((e) -> q.reject Bolt.constructResult e)
+          q.promise
+
         getMeta: ->
           q = $q.defer()
           Bolt.boltTransaction(

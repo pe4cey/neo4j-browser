@@ -63,6 +63,11 @@ angular.module('neo4jApp.controllers')
             fetchJMX()
           )
 
+        fetchAvailableStoredProcedures = ->
+          ProtocolFactory.getStoredProceduresService().getStoredProceduresList()
+          .then((procedures) ->
+            $scope.procedures = procedures
+          )
         fetchJMX = ->
           ProtocolFactory.getJmxService().getJmx([
             "org.neo4j:instance=kernel#0,name=Configuration"
@@ -171,6 +176,8 @@ angular.module('neo4jApp.controllers')
           $scope.neo4j.version = val.version
           $scope.neo4j.edition = val.edition
           $scope.neo4j.enterpriseEdition = val.edition is 'enterprise'
+          fetchAvailableStoredProcedures()
+
           $scope.$emit 'db:updated:edition', val.edition
           if val.version then $scope.motd.setCallToActionVersion(val.version)
         , true

@@ -36,6 +36,14 @@ angular.module('neo4jApp.services')
           q.resolve Server.version(version)
           q.promise
 
+        getStoredProceduresList: () ->
+          q = $q.defer()
+          Server.cypher('', {query: 'CALL dbms.procedures() YIELD name'}).then(
+            (r) ->
+              response = r.data.data.map((d) -> return d[0])
+              q.resolve response
+          )
+
         getSchema: (input) ->
           q = $q.defer()
           Server.console(input.substr(1))

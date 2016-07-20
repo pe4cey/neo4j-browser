@@ -173,6 +173,10 @@ angular.module('neo4jApp.services')
         return null unless r.records
         {version: r.records[0].get('versions')[0], edition: r.records[0].get('edition')}
 
+      constructStoredProcedure = (r) ->
+        return null unless r.records
+        r.records.map((a) -> return a.get 'name')
+
       jmxResultToRESTResult = (r, whatToGet = []) ->
         return {data: []} unless r.records
         filtered = r.records.filter((record) -> whatToGet.indexOf(record.get('name')) > -1)
@@ -384,6 +388,7 @@ angular.module('neo4jApp.services')
         constructSchemaResult: (indexes, constraints) ->
           schemaResultToRESTResult indexes, constraints
         constructJmxResult: jmxResultToRESTResult
+        constructStoredProcedure: constructStoredProcedure
         constructVersionResult: versionResultToRESTResult
         clearConnection: clearConnection
       }
