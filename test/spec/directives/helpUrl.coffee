@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict'
 
-describe 'Directive: helpUrl.directives', () ->
+describe 'Directive: runnable.directives', () ->
   beforeEach module 'neo4jApp'
 
   element = {}
