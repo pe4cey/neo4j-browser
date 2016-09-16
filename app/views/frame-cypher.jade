@@ -74,7 +74,9 @@ div(ng-controller="CypherResultCtrl", fullscreen)
                     i.sl.sl-zoom-in
                   button.zoom_out
                     i.sl.sl-zoom-out
-
+                .zoom-holder(ng-hide='isFullScreen()')
+                  button.relayout(ng-click='relayout()')
+                    i.sl.sl-network
             .status-bar(ng-show='true')
               //- isActive("graph")')
               //- .cell

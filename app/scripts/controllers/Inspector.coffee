@@ -50,6 +50,7 @@ angular.module('neo4jApp.controllers')
           $scope.inspectorChanged = yes
         , 0)
 
+      $scope.relayout = -> $scope.$emit 'graph.relayout'
       $scope.onNodeDragToggle = (node) ->
         $scope.inspectorFixed = !!node
 

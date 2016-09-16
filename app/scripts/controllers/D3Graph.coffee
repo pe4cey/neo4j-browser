@@ -74,6 +74,12 @@ angular.module('neo4jApp.controllers')
         toggleSelection(selectedItem)
       )
 
+      $rootScope.$on 'graph.relayout', ->
+        return unless graphView
+        graphView.graph.nodes().forEach (n) ->
+          n.fixed = no
+        initGraphView()
+
       $scope.$watch 'displayInternalRelationships', (displayInternalRelationships) ->
         $rootScope.stickyDisplayInternalRelationships = displayInternalRelationships
         return unless graphView
