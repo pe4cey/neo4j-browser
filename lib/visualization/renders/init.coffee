@@ -27,14 +27,17 @@ do ->
 
   nodeOutline = new neo.Renderer(
     onGraphChange: (selection, viz) ->
-      circles = selection.selectAll('circle.outline').data((node) -> [node])
+      circles = selection.selectAll('image.outline').data((node) -> [node])
 
       circles.enter()
-      .append('circle')
+      .append('image')
       .classed('outline', true)
+      .attr('xlink:href':'https://neo4j.com/wp-content/themes/neo4jweb/assets/images/neo4j-logo-2015.png')
       .attr
-        cx: 0
-        cy: 0
+          x: -50
+          y: -50
+          width: 100
+          height: 100
 
       circles
       .attr
