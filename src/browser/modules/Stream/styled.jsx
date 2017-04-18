@@ -66,7 +66,7 @@ export const StyledVisContainer = styled.div`
 `
 
 export const StyledFrameBody = styled.div`
-  height: ${props => props.collapsed ? 0 : (props.fullscreen ? '100%' : dim.frameBodyHeight + 'px')};
+  max-height: ${props => props.collapsed ? 0 : (props.fullscreen ? '100%' : (dim.frameBodyHeight * 2) + 'px')};
   visibility: ${props => props.collapsed ? 'hidden' : 'visible'};
   display: flex;
   flex-direction: row;
@@ -80,7 +80,7 @@ export const StyledFrameMainSection = styled.div`
 
 export const StyledFrameContents = styled.div`
   overflow: auto;
-  height: ${props => (props.fullscreen ? '100vh' : (dim.frameBodyHeight) + 'px')};
+  max-height: ${props => (props.fullscreen ? '100vh' : (dim.frameBodyHeight * 2) + 'px')};
 `
 
 export const PaddedDiv = styled.div`
