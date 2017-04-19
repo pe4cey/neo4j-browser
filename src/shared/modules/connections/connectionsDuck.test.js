@@ -36,6 +36,18 @@ const epicMiddleware = createEpicMiddleware(connections.disconnectEpic)
 const mockStore = configureMockStore([epicMiddleware, createReduxMiddleware(bus)])
 
 describe('connections reducer', () => {
+  test('rehydrates state with initial value', () => {
+    let initialState = reducer(undefined, {type: ''})
+    const firstKeyFromState = Object.keys(initialState)[0]
+
+    expect(initialState[firstKeyFromState]).not.toBe(undefined)
+    delete initialState[firstKeyFromState]
+    expect(initialState[firstKeyFromState]).toBe(undefined)
+
+    const otherState = reducer(initialState, {type: ''})
+    expect(otherState[firstKeyFromState]).not.toBe(undefined)
+  })
+
   test('handles connections.ADD', () => {
     const action = {
       type: connections.ADD,

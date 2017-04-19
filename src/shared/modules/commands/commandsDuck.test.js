@@ -56,6 +56,19 @@ describe('commandsDuck', () => {
     store.clearActions()
     bus.reset()
   })
+
+  test('rehydrates state with initial value', () => {
+    let initialState = commands.default(undefined, {type: ''})
+    const firstKeyFromState = Object.keys(initialState)[0]
+
+    expect(initialState[firstKeyFromState]).not.toBe(undefined)
+    delete initialState[firstKeyFromState]
+    expect(initialState[firstKeyFromState]).toBe(undefined)
+
+    const otherState = commands.default(initialState, {type: ''})
+    expect(otherState[firstKeyFromState]).not.toBe(undefined)
+  })
+
   describe('commandsEpic', () => {
     test('listens on USER_COMMAND_QUEUED for ":" commands and does a series of things', (done) => {
       // Given

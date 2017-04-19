@@ -64,7 +64,7 @@ export default function settings (state = initialState, action) {
     case USER_CLEAR:
       return initialState
     default:
-      return state
+      return Object.assign({}, initialState, state)
   }
 }
 
