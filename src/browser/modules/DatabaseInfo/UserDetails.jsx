@@ -19,8 +19,10 @@
  */
 
 import { Component } from 'preact'
+import { connect } from 'preact-redux'
 import { withBus } from 'preact-suber'
 import { CYPHER_REQUEST } from 'shared/modules/cypher/cypherDuck'
+import { getAvailableProcedures } from 'shared/modules/features/featuresDuck'
 import {DrawerSubHeader, DrawerSection, DrawerSectionBody} from 'browser-components/drawer'
 import {StyledTable, StyledKey, StyledValue} from './styled'
 
@@ -32,20 +34,25 @@ export class UserDetails extends Component {
     }
   }
   componentWillReceiveProps (props) {
-    this.props.bus.self(
-      CYPHER_REQUEST,
-      { query: 'CALL dbms.security.showCurrentUser()' },
-      (response) => {
-        if (!response.success) return
-        const result = response.result
-        this.setState({
-          userDetails: {
-            username: result.records[0].get('username'),
-            roles: result.records[0].get('roles')
-          }
-        })
-      }
-    )
+    if (this.hasSecurityFeatures()) {
+      this.props.bus.self(
+        CYPHER_REQUEST,
+        { query: 'CALL dbms.security.showCurrentUser()' },
+        (response) => {
+          if (!response.success) return
+          const result = response.result
+          this.setState({
+            userDetails: {
+              username: result.records[0].get('username'),
+              roles: result.records[0].get('roles')
+            }
+          })
+        }
+      )
+    }
+  }
+  hasSecurityFeatures () {
+    return this.props.availableProcedures.includes('dbms.security.showCurrentUser')
   }
   render () {
     const userDetails = this.state.userDetails
@@ -75,4 +82,9 @@ export class UserDetails extends Component {
     }
   }
 }
-export default withBus(UserDetails)
+const mapStateToProps = (state) => {
+  return {
+    availableProcedures: getAvailableProcedures(state) || []
+  }
+}
+export default withBus(connect(mapStateToProps, null)(UserDetails))
