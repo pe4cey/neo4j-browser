@@ -47,6 +47,17 @@ describe('user reducer current info', () => {
     const nextState = reducer({a: 'b'}, action)
     expect(nextState.info).toEqual({username: 'username', roles: ['king']})
   })
+  test('rehydrates state with initial value', () => {
+    let initialState = reducer(undefined, {type: ''})
+    const firstKeyFromState = Object.keys(initialState)[0]
+
+    expect(initialState[firstKeyFromState]).not.toBe(undefined)
+    delete initialState[firstKeyFromState]
+    expect(initialState[firstKeyFromState]).toBe(undefined)
+
+    const otherState = reducer(initialState, {type: ''})
+    expect(otherState[firstKeyFromState]).not.toBe(undefined)
+  })
 })
 
 describe('User info actions', () => {

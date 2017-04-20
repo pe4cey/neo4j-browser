@@ -22,6 +22,18 @@
 import reducer, * as meta from './dbMetaDuck'
 
 describe('updating metadata', () => {
+  test('rehydrates state with initial value', () => {
+    let initialState = reducer(undefined, {type: ''})
+    const firstKeyFromState = Object.keys(initialState)[0]
+
+    expect(initialState[firstKeyFromState]).not.toBe(undefined)
+    delete initialState[firstKeyFromState]
+    expect(initialState[firstKeyFromState]).toBe(undefined)
+
+    const otherState = reducer(initialState, {type: ''})
+    expect(otherState[firstKeyFromState]).not.toBe(undefined)
+  })
+
   test('should update state when metadata is updated', () => {
     const returnedLabels = {
       a: 'labels',

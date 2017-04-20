@@ -71,7 +71,7 @@ export default function labels (state = initialState, action) {
     case CLEAR:
       return {...initialState}
     default:
-      return state
+      return Object.assign({}, initialState, state)
   }
 }
 

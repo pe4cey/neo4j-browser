@@ -45,6 +45,18 @@ describe('discoveryOnStartupEpic', () => {
     store.clearActions()
   })
 
+  test('rehydrates state with initial value', () => {
+    let initialState = discovery.default(undefined, {type: ''})
+    const firstKeyFromState = Object.keys(initialState)[0]
+
+    expect(initialState[firstKeyFromState]).not.toBe(undefined)
+    delete initialState[firstKeyFromState]
+    expect(initialState[firstKeyFromState]).toBe(undefined)
+
+    const otherState = discovery.default(initialState, {type: ''})
+    expect(otherState[firstKeyFromState]).not.toBe(undefined)
+  })
+
   test('listens on APP_START and tries to find a bolt host and sets it to default when bolt discovery not found', (done) => {
     // Given
     const action = { type: APP_START }
