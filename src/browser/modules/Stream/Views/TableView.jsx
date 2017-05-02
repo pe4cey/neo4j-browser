@@ -33,6 +33,9 @@ class TableView extends Component {
       data: dataCopy
     }
   }
+  stringify (value) {
+    return JSON.stringify(value).replace(/"/g, "'")
+  }
   render () {
     if (!this.props.data) return (<PaddedDiv style={this.props.style}><StyledBodyMessage>{this.props.message}</StyledBodyMessage></PaddedDiv>)
     const tableHeader = this.state.columns.map((column, i) => (
@@ -42,9 +45,9 @@ class TableView extends Component {
       return entries.map((entry) => {
         if (entry) {
           if (entry.properties) {
-            return <StyledTd className='table-properties' key={v4()}>{JSON.stringify(entry.properties)}</StyledTd>
+            return <StyledTd className='table-properties' key={v4()}>{this.stringify(entry.properties)}</StyledTd>
           }
-          return <StyledTd className='table-properties' key={v4()}>{JSON.stringify(entry)}</StyledTd>
+          return <StyledTd className='table-properties' key={v4()}>{this.stringify(entry)}</StyledTd>
         }
         return <StyledTd className='table-properties' key={v4()}>(empty)</StyledTd>
       })
