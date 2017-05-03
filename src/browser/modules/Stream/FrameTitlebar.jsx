@@ -91,7 +91,7 @@ class FrameTitlebar extends Component {
             props.togglePin()
             props.togglePinning(frame.id, frame.isPinned)
           }} pressed={props.pinned}><PinIcon /></FrameButton>
-          <Visible if={frame.type === 'cypher'}>
+          <Visible if={frame.type === 'cypher' || frame.type === 'play' || frame.type === 'play-remote'}>
             <FrameButton title={(props.fullscreen) ? 'Close fullscreen' : 'Fullscreen'} onClick={() => props.fullscreenToggle()}>{fullscreenIcon}</FrameButton>
           </Visible>
           <FrameButton title={(props.collapse) ? 'Expand' : 'Collapse'}onClick={() => props.collapseToggle()}>{expandCollapseIcon}</FrameButton>
