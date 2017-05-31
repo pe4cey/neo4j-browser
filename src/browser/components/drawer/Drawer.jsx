@@ -25,8 +25,8 @@ export const Drawer = styled.div`
 `
 
 export const DrawerHeader = styled.h4`
-  color: ${props => props.theme.primaryHeaderText}
-  background-color: ${props => props.theme.drawerBackground}
+  color: ${props => props.theme.primaryHeaderText};
+  background-color: ${props => props.theme.drawerBackground};
   font-size: 18px;
   height: 73px;
   padding: 25px 0 0 25px;
