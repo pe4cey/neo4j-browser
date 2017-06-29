@@ -25,11 +25,14 @@ import Render from 'browser-components/Render'
 import ClickToCode from '../ClickToCode'
 import { StyledMain, WarningBanner, ErrorBanner, NotAuthedBanner, StyledCodeBlockAuthBar, StyledCodeBlockErrorBar } from './styled'
 import SyncReminderBanner from './SyncReminderBanner'
+import Dashboard from 'browser/modules/Dashboard'
 
 const Main = (props) => {
   return (
     <StyledMain>
-      <Editor />
+      <Render if={props.view === 'stream'}>
+        <Editor />
+      </Render>
       <Render if={props.showUnknownCommandBanner}>
         <ErrorBanner>
           Type&nbsp;
@@ -59,7 +62,12 @@ const Main = (props) => {
         </WarningBanner>
       </Render>
       <SyncReminderBanner />
-      <Stream />
+      <Render if={props.view === 'stream'}>
+        <Stream />
+      </Render>
+      <Render if={props.view === 'dashboard'}>
+        <Dashboard />
+      </Render>
     </StyledMain>
   )
 }

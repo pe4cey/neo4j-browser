@@ -224,7 +224,9 @@ module.exports = {
       'styled-components',
       'iconv-lite',
       'pako',
-      'preact-redux'
+      'preact-redux',
+      'react-d3-basic',
+      'react-d3-core'
     ]
   },
   output: {
