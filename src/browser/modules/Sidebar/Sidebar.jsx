@@ -23,6 +23,7 @@ import { connect } from 'preact-redux'
 import DatabaseInfo from '../DatabaseInfo/DatabaseInfo'
 import Favorites from './Favorites'
 import Documents from './Documents'
+import Dashboard from 'browser/modules/Dashboard'
 import About from './About'
 import TabNavigation from 'browser-components/TabNavigation/Navigation'
 import Settings from './Settings'
@@ -35,6 +36,7 @@ import {
   DocumentsIcon,
   CloudSyncIcon,
   SettingsIcon,
+  DashboardIcon,
   AboutIcon
 } from 'browser-components/icons/Icons'
 
@@ -45,12 +47,14 @@ class Sidebar extends Component {
     const DatabaseDrawer = DatabaseInfo
     const FavoritesDrawer = Favorites
     const DocumentsDrawer = Documents
+    const DashboardDrawer = Dashboard
     const SettingsDrawer = Settings
     const AboutDrawer = About
     const topNavItemsList = [
       {name: 'DB', title: 'Database', icon: (isOpen) => <DatabaseIcon isOpen={isOpen} connectionState={this.props.neo4jConnectionState} />, content: DatabaseDrawer},
       {name: 'Favorites', title: 'Favorites', icon: (isOpen) => <FavoritesIcon isOpen={isOpen} />, content: FavoritesDrawer},
-      {name: 'Documents', title: 'Documentation', icon: (isOpen) => <DocumentsIcon isOpen={isOpen} />, content: DocumentsDrawer}
+      {name: 'Documents', title: 'Documentation', icon: (isOpen) => <DocumentsIcon isOpen={isOpen} />, content: DocumentsDrawer},
+      {name: 'Dashboard', title: 'Dashboard', icon: (isOpen) => <DashboardIcon isOpen={isOpen} />, content: DashboardDrawer}
     ]
     const bottomNavItemsList = [
       {name: 'Sync', title: 'Cloud Services', icon: (isOpen) => <CloudSyncIcon isOpen={isOpen} connected={this.props.syncConnected} />, content: BrowserSync},

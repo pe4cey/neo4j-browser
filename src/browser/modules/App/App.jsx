@@ -58,7 +58,7 @@ class App extends Component {
     this.props.bus && this.props.bus.send(EXPAND)
   }
   render () {
-    const {drawer, cmdchar, handleNavClick, activeConnection, connectionState, theme, showUnknownCommandBanner, errorMessage, loadUdc} = this.props
+    const {drawer, cmdchar, handleNavClick, activeConnection, connectionState, theme, showUnknownCommandBanner, errorMessage, loadUdc, view} = this.props
     const themeData = themes[theme] || themes['normal']
     return (
       <ThemeProvider theme={themeData}>
@@ -78,6 +78,7 @@ class App extends Component {
                   connectionState={connectionState}
                   showUnknownCommandBanner={showUnknownCommandBanner}
                   errorMessage={errorMessage}
+                  view={view}
                 />
               </StyledMainWrapper>
             </StyledBody>
@@ -99,7 +100,8 @@ const mapStateToProps = (state) => {
     showUnknownCommandBanner: wasUnknownCommand(state),
     errorMessage: getErrorMessage(state),
     loadUdc: allowOutgoingConnections(state),
-    titleString: asTitleString(connectionData)
+    titleString: asTitleString(connectionData),
+    view: 'stream'
   }
 }
 
