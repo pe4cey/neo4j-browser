@@ -165,7 +165,10 @@ export class CypherFrame extends Component {
             result={result}
             setParentState={this.setState.bind(this)}
             frameHeight={this.state.frameHeight}
-            assignVisElement={(svgElement, graphElement) => { this.visElement = {svgElement, graphElement} }}
+            assignVisElement={(svgElement, graphElement) => {
+              this.visElement = {svgElement, graphElement}
+              this.forceUpdate()
+            }}
             initialNodeDisplay={this.props.initialNodeDisplay}
             autoComplete={this.props.autoComplete}
             maxNeighbours={this.props.maxNeighbours}
