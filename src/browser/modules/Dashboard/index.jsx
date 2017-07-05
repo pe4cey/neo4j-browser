@@ -19,9 +19,11 @@
  */
 
 import styled from 'styled-components'
-import Widget from './Widget'
+import { Component } from 'preact'
 import { withBus } from 'preact-suber'
 import { CYPHER_REQUEST } from 'shared/modules/cypher/cypherDuck'
+import Widget from './Widget'
+import { getAllWidgets } from './AllWidgets'
 
 const StyledStream = styled.div`
   padding: 0;
@@ -29,50 +31,39 @@ const StyledStream = styled.div`
   flex-direction: column;
   margin-top: 17px;
   background-color: #fff;
+  color: black;
 `
 
-const Dashboard = ({bus}) => {
-  const query = (cb) => {
-    if (bus) {
-      bus.self(
-        CYPHER_REQUEST,
-        {
-          query: 'MATCH (n) RETURN count(n)'
-        },
-        cb
-      )
+export class Dashboard extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      res: []
     }
   }
-  const memoryUsage = (cb) => {
-    if (bus) {
-      bus.self(
-        CYPHER_REQUEST,
-        {
-          query: `call dbms.queryJmx('java.lang:type=OperatingSystem') yield attributes
-                  return attributes.FreePhysicalMemorySize.value as value`
-        },
-        cb
-      )
-    }
+  componentWillMount () {
+    getAllWidgets(this.props.bus).then(res => this.setState({res}))
   }
-  const cpuUsage = (cb) => {
-    if (bus) {
-      bus.self(
-        CYPHER_REQUEST,
-        {
-          query: `call dbms.queryJmx('java.lang:type=OperatingSystem') yield attributes
-                  return attributes.SystemCpuLoad.value as value`
-        },
-        cb
-      )
-    }
+  render () {
+    return (
+      <StyledStream>
+        {this.state.res.map((value) => {
+          return (<Widget type='line' title={value} fetchData={(cb) => {
+            this.props.bus.self(
+              CYPHER_REQUEST,
+              {
+                query: `call dbms.queryJmx('java.lang:type=OperatingSystem') yield attributes
+                        return attributes.${value}.value as value`
+              },
+              cb
+            )
+          }} timeout={1000} dataPoints={10} />)
+        })
+      }
+      </StyledStream>
+    )
   }
-  return (
-    <StyledStream>
-      <Widget type='line' fetchData={query} timeout={1000} />
-      <Widget type='line' title='Memory Usage' fetchData={memoryUsage} timeout={1000} />
-      <Widget type='line' title='CPU Usage' fetchData={cpuUsage} timeout={10000} />
-    </StyledStream>
-  )
+
 }
+
 export default withBus(Dashboard)

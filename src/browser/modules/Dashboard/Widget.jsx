@@ -22,7 +22,7 @@ import { Component } from 'preact'
 import { withBus } from 'preact-suber'
 import { LineChart } from 'react-d3-basic'
 
-class Widget extends Component {
+export class Widget extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -31,7 +31,7 @@ class Widget extends Component {
   }
   componentWillMount () {
     const fn = () => {
-      return this.props.fetchData(this.responseHandler.bind(this))
+      return (this.props.fetchData) ? this.props.fetchData(this.responseHandler.bind(this)) : () => {}
     }
     fn()
     setInterval(fn, this.props.timeout || 2000)
@@ -39,9 +39,16 @@ class Widget extends Component {
 
   responseHandler (res) {
     if (!res.success) return
+    ++this.tick
+    console.log('tick', this.tick)
     const value = res.result.records[0].get(res.result.records[0].keys[0])
-    const intValue = (value.toNumber) ? value.toNumber() : window.parseFloat(value)
-    this.setState({count: this.state.count.concat([{count: intValue, index: this.state.count.length + 1}])})
+    const intValue = (value.toNumber) ? value.toNumber() : window.parseFloat(value) || 0
+    const arrayIndex = this.state.count.length + 1
+    const point = arrayIndex - this.props.dataPoints
+    const start = (point < 0) ? 0 : point
+    const count = this.state.count.concat([{count: intValue, index: this.tick}]).slice(start, arrayIndex)
+    console.log('count', count)
+    this.setState({count})
   }
   render () {
     const margins = {left: 50, right: 50, top: 50, bottom: 50}
