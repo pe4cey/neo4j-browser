@@ -28,6 +28,7 @@ export class Widget extends Component {
     this.state = {
       count: []
     }
+    this.tick = 0
   }
   componentWillMount () {
     const fn = () => {
@@ -37,17 +38,18 @@ export class Widget extends Component {
     setInterval(fn, this.props.timeout || 2000)
   }
 
+  mapper (res) {
+    const value = res.result.records[0].get(res.result.records[0].keys[0])
+    return (value.toNumber) ? value.toNumber() : window.parseFloat(value) || 0
+  }
+
   responseHandler (res) {
     if (!res.success) return
-    ++this.tick
-    console.log('tick', this.tick)
-    const value = res.result.records[0].get(res.result.records[0].keys[0])
-    const intValue = (value.toNumber) ? value.toNumber() : window.parseFloat(value) || 0
+    const intValue = this.mapper(res)
     const arrayIndex = this.state.count.length + 1
     const point = arrayIndex - this.props.dataPoints
     const start = (point < 0) ? 0 : point
-    const count = this.state.count.concat([{count: intValue, index: this.tick}]).slice(start, arrayIndex)
-    console.log('count', count)
+    const count = this.state.count.concat([{count: intValue, index: ++this.tick}]).slice(start, arrayIndex)
     this.setState({count})
   }
   render () {
