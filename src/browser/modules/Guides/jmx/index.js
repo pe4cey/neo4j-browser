@@ -18,15 +18,4 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import styles from './style.css'
-import { StyledSlide } from './styled.jsx'
-
-const Slide = ({html, Jmx}) => {
-  if (Jmx) {
-    return (<StyledSlide className={styles.slide}><Jmx /></StyledSlide>)
-  }
-
-  return (<StyledSlide className={styles.slide} dangerouslySetInnerHTML={{__html: html}} />)
-}
-
-export default Slide
+export { default as dashboard } from './dashboard'

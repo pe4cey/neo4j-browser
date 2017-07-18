@@ -20,7 +20,7 @@
 
 import { Component } from 'preact'
 import { withBus } from 'preact-suber'
-import { LineChart } from 'react-d3-basic'
+import { AreaChart } from 'react-d3-basic'
 
 export class Widget extends Component {
   constructor (props) {
@@ -38,14 +38,9 @@ export class Widget extends Component {
     setInterval(fn, this.props.timeout || 2000)
   }
 
-  mapper (res) {
-    const value = res.result.records[0].get(res.result.records[0].keys[0])
-    return (value.toNumber) ? value.toNumber() : window.parseFloat(value) || 0
-  }
-
   responseHandler (res) {
     if (!res.success) return
-    const intValue = this.mapper(res)
+    const intValue = this.props.mapper(res)
     const arrayIndex = this.state.count.length + 1
     const point = arrayIndex - this.props.dataPoints
     const start = (point < 0) ? 0 : point
@@ -58,14 +53,17 @@ export class Widget extends Component {
       {
         field: 'count',
         name: this.props.title,
-        color: '#ff7f0e'
+        color: '#ff7f0e',
+        style: {
+          opacity: 0.2
+        }
       }
     ]
 
     const x = (d) => d.index
 
     return (
-      <LineChart
+      <AreaChart
         margins={margins}
         title={this.props.title || ''}
         data={this.state.count}
@@ -73,6 +71,8 @@ export class Widget extends Component {
         height={300}
         chartSeries={chartSeries}
         x={x}
+        xLabel={'time'}
+        {...this.props}
       />
     )
   }

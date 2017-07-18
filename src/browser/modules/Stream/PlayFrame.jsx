@@ -24,6 +24,7 @@ import { fetchGuideFromWhitelistAction } from 'shared/modules/commands/commandsD
 
 import Guides from '../Guides/Guides'
 import * as html from '../Guides/html'
+import * as jmx from '../Guides/jmx'
 import FrameTemplate from './FrameTemplate'
 import { splitStringOnFirst } from 'services/commandUtils'
 import { ErrorsView } from './CypherFrame/ErrorsView'
@@ -62,6 +63,10 @@ export class PlayFrame extends Component {
     const guideName = topicInput.toLowerCase().replace(/\s|-/g, '')
     if (html[guideName] !== undefined) { // Found it locally
       this.setState({ guide: <Guides withDirectives html={html[guideName]} /> })
+      return
+    }
+    if (jmx[guideName] !== undefined) { // Found it locally
+      this.setState({ guide: <Guides withDirectives jmx={jmx[guideName]} /> })
       return
     }
     // Not found remotely or locally
