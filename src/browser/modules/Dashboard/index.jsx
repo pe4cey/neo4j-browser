@@ -44,6 +44,10 @@ export class Dashboard extends Component {
   componentWillMount () {
     getAllWidgets(this.props.bus).then(res => this.setState({res}))
   }
+  mapper (res) {
+    const value = res.result.records[0].get(res.result.records[0].keys[0])
+    return (value.toNumber) ? value.toNumber() : window.parseFloat(value) || 0
+  }
   render () {
     return (
       <StyledStream>
@@ -57,13 +61,12 @@ export class Dashboard extends Component {
               },
               cb
             )
-          }} timeout={1000} dataPoints={10} />)
+          }} timeout={1000} dataPoints={10} mapper={this.mapper.bind(this)} />)
         })
       }
       </StyledStream>
     )
   }
-
 }
 
 export default withBus(Dashboard)

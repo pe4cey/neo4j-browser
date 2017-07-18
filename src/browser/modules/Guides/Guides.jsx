@@ -42,6 +42,11 @@ export default class Guides extends Component {
     this.setState({ slides: reactSlides, firstRender: false })
   }
   render () {
+    if (this.props.jmx) {
+      return (
+        <Slide Jmx={this.props.jmx} />
+      )
+    }
     if (this.state.slides && Array.isArray(this.state.slides)) {
       const ListOfSlides = this.state.slides.map((slide) => {
         const slideComponent = <Slide key={uuid.v4()} html={slide.html.innerHTML} />

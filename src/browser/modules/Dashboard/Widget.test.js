@@ -57,7 +57,7 @@ describe('Widget', () => {
       })
     return result
   })
-  test.only('should only store 10 data points', () => {
+  test('should only store 10 data points', () => {
     jest.useFakeTimers()
     const fetchData = jest.fn()
     const timeoutInMs = 100
@@ -70,15 +70,13 @@ describe('Widget', () => {
         }]
       }
     }
-    // const runCount = 10
     const dataPoints = 10
+    const mapper = () => 'anything'
     const result = mount(Widget)
-      .withProps({fetchData, timeout: timeoutInMs, dataPoints})
+      .withProps({fetchData, timeout: timeoutInMs, dataPoints, mapper})
       .then((wrapper) => {
         wrapper.setState({count: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]})
         wrapper.instance().responseHandler(fakeRes)
-        // wrapper.update()
-        // jest.runTimersToTime(timeoutInMs * (runCount))
 
         expect(wrapper.state().count.length).toBe(dataPoints)
       })
