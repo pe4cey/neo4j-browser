@@ -55,7 +55,7 @@ angular.module('neo4jApp.settings', ['neo4jApp.utils'])
     retainConnectionCredentials: yes
     shouldReportUdc: no
     experimentalFeatures: no
-    useBolt: yes
+    useBolt: no
     useBoltRouting: no
     boltHost: "" # $location.host() is default
     shownTermsAndPrivacy: no
@@ -72,6 +72,7 @@ angular.module('neo4jApp.settings')
     load: ->
       settings = localStorageService.get('settings')
       if angular.isObject(settings)
+        delete settings.useBolt
         Utils.extendDeep(Settings, settings)
 
     reset: ->
