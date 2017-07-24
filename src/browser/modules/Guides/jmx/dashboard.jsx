@@ -22,6 +22,8 @@ import { withBus } from 'preact-suber'
 
 import Widget from 'browser/modules/Dashboard/Widget'
 import SingleNumberWidget from 'browser/modules/Dashboard/SingleNumberWidget'
+import SingleNumberGauge from 'browser/modules/Dashboard/SingleNumberGauge'
+// import PreChartWidget from 'browser/modules/Dashboard/PreChartWidget'
 import { CYPHER_REQUEST } from 'shared/modules/cypher/cypherDuck'
 
 const dashboard = (props) => {
@@ -51,11 +53,15 @@ const dashboard = (props) => {
     <table>
       <tr>
         {
-          // widgets.map(w => <td>{w}</td>)
+          widgets.map(w => <td>{w}</td>)
         }
       </tr>
       <tr>
-        <SingleNumberWidget query='MATCH (n) RETURN count(n) as value' />
+        <SingleNumberWidget value='Number of users signed up' query='MATCH (n) RETURN count(n) as value' />
+        <SingleNumberGauge value='CPU %' query={
+          `call dbms.queryJmx('java.lang:type=OperatingSystem') yield attributes
+           return attributes.ProcessCpuLoad.value * 1000 as value`
+        } />
       </tr>
     </table>
   )

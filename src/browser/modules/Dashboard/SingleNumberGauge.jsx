@@ -19,20 +19,12 @@
  */
 
 import { withBus } from 'preact-suber'
-import { CYPHER_REQUEST } from 'shared/modules/cypher/cypherDuck'
-import Widget from './Widget'
-import { singleValueAsNumber } from './Mappers'
+import SingleNumberWidget from './SingleNumberWidget'
 
-export const SingleNumberWidget = (props) => {
+export const SingleNumberGauge = (props) => {
   return (
-    <Widget type={props.type || 'LINE'} title={props.value} fetchData={(cb) => {
-      props.bus.self(
-        CYPHER_REQUEST,
-        { query: props.query },
-        cb
-      )
-    }} timeout={1000} dataPoints={10} mapper={singleValueAsNumber} />
+    <SingleNumberWidget type='GAUGE' {...props} />
   )
 }
 
-export default withBus(SingleNumberWidget)
+export default withBus(SingleNumberGauge)

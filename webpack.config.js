@@ -225,8 +225,9 @@ module.exports = {
       'iconv-lite',
       'pako',
       'preact-redux',
-      'react-d3-basic',
-      'react-d3-core'
+      'precharts'
+      // 'react-d3-basic',
+      // 'react-d3-core'
     ]
   },
   output: {

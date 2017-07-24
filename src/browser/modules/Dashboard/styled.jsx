@@ -17,22 +17,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import styled from 'styled-components'
 
-import { withBus } from 'preact-suber'
-import { CYPHER_REQUEST } from 'shared/modules/cypher/cypherDuck'
-import Widget from './Widget'
-import { singleValueAsNumber } from './Mappers'
-
-export const SingleNumberWidget = (props) => {
-  return (
-    <Widget type={props.type || 'LINE'} title={props.value} fetchData={(cb) => {
-      props.bus.self(
-        CYPHER_REQUEST,
-        { query: props.query },
-        cb
-      )
-    }} timeout={1000} dataPoints={10} mapper={singleValueAsNumber} />
-  )
-}
-
-export default withBus(SingleNumberWidget)
+export const StyledWidgetContainer = styled.div`
+  margin: auto 1em 1em 1em;
+  padding: 1.2em;
+  border: 1px solid ${props => props.theme.editorBarBackground};
+`

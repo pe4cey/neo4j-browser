@@ -20,13 +20,23 @@
 
 import { Component } from 'preact'
 import { withBus } from 'preact-suber'
-import { AreaChart } from 'react-d3-basic'
+import { StyledWidgetContainer } from './styled'
+import {
+  ComposedChart,
+  Area,
+  CartesianGrid,
+  Tooltip,
+  PieChart,
+  Pie,
+  Cell
+} from 'precharts'
 
 export class Widget extends Component {
   constructor (props) {
     super(props)
+    this.startData = {count: 0, index: 0}
     this.state = {
-      count: []
+      data: new Array(10).fill({...this.startData})
     }
     this.tick = 0
   }
@@ -41,40 +51,43 @@ export class Widget extends Component {
   responseHandler (res) {
     if (!res.success) return
     const intValue = this.props.mapper(res)
-    const arrayIndex = this.state.count.length + 1
+    const arrayIndex = this.state.data.length + 1
     const point = arrayIndex - this.props.dataPoints
     const start = (point < 0) ? 0 : point
-    const count = this.state.count.concat([{count: intValue, index: ++this.tick}]).slice(start, arrayIndex)
-    this.setState({count})
+    const data = this.state.data.concat([{count: intValue, index: ++this.tick}]).slice(start, arrayIndex)
+    this.setState({data})
   }
   render () {
-    const margins = {left: 50, right: 50, top: 50, bottom: 50}
-    const chartSeries = [
-      {
-        field: 'count',
-        name: this.props.title,
-        color: '#ff7f0e',
-        style: {
-          opacity: 0.2
-        }
-      }
-    ]
+    switch (this.props.type) {
+      case 'GAUGE':
+        const used = (this.state.data[this.state.data.length - 1]) ? this.state.data[this.state.data.length - 1].count : 0
+        console.log('used', this.state.data, this.state.data.length, this.state.data[this.state.data.length], used)
+        const data = [{name: 'used', value: used}, {name: 'available', value: 100 - used}]
 
-    const x = (d) => d.index
-
-    return (
-      <AreaChart
-        margins={margins}
-        title={this.props.title || ''}
-        data={this.state.count}
-        width={300}
-        height={300}
-        chartSeries={chartSeries}
-        x={x}
-        xLabel={'time'}
-        {...this.props}
-      />
-    )
+        return (
+          <PieChart width={800} height={400}>
+            <Pie isAnimationActive={this.props.isStaticData || false} data={data} startAngle={180} endAngle={0} cx={200} cy={200} outerRadius={80} fill='#8884d8' label>
+            {
+              data.map((entry, index) => {
+                console.log('entry', entry)
+                return (entry.name === 'used') ? <Cell fill='#8884d8' /> : <Cell fill='transparent' />
+              })
+            }
+            </Pie>
+          </PieChart>
+        )
+      default:
+        return (
+          <StyledWidgetContainer>
+            <h4>{this.props.title}</h4>
+            <ComposedChart width={500} height={200} data={this.state.data}>
+              <CartesianGrid strokeDasharray='3 3' />
+              <Area isAnimationActive={this.props.isStaticData || false} dataKey='count' fill='green' opacity={0.3} />
+              <Tooltip />
+            </ComposedChart>
+          </StyledWidgetContainer>
+        )
+    }
   }
 }
 export default withBus(Widget)
