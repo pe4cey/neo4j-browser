@@ -239,5 +239,9 @@ export const stringifyMod = () => {
   }
 }
 
+export const mergeListsById = (list1, list2) => {
+  return list1.concat(list2.filter(favInList2 => list1.findIndex(favInList1 => favInList1.id === favInList2.id) < 0))
+}
+
 // Epic helpers
 export const put = (dispatch) => (action) => dispatch(action)

@@ -65,20 +65,21 @@ describe('Widget', () => {
       success: true,
       result: {
         records: [{
-          get: () => 0,
+          get: () => {
+            return 0
+          },
           keys: ['a']
         }]
       }
     }
     const dataPoints = 10
-    const mapper = () => 'anything'
+    const mapper = () => '123'
     const result = mount(Widget)
       .withProps({fetchData, timeout: timeoutInMs, dataPoints, mapper})
       .then((wrapper) => {
         wrapper.setState({count: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]})
         wrapper.instance().responseHandler(fakeRes)
-
-        expect(wrapper.state().count.length).toBe(dataPoints)
+        expect(wrapper.state().data.length).toBe(dataPoints)
       })
     return result
   })

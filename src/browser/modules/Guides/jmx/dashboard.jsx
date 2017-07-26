@@ -23,7 +23,6 @@ import { withBus } from 'preact-suber'
 import Widget from 'browser/modules/Dashboard/Widget'
 import SingleNumberWidget from 'browser/modules/Dashboard/SingleNumberWidget'
 import SingleNumberGauge from 'browser/modules/Dashboard/SingleNumberGauge'
-// import PreChartWidget from 'browser/modules/Dashboard/PreChartWidget'
 import { CYPHER_REQUEST } from 'shared/modules/cypher/cypherDuck'
 
 const dashboard = (props) => {

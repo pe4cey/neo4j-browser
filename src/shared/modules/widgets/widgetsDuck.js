@@ -20,43 +20,40 @@
 
 import uuid from 'uuid'
 import { USER_CLEAR, APP_START } from 'shared/modules/app/appDuck'
-import { getBrowserName } from 'services/utils'
-// import { scripts as staticScriptsList } from './staticScripts'
+import { mergeListsById } from 'services/utils'
 
 export const NAME = 'widgets'
 
 export const ADD_WIDGET = 'widgets/ADD_WIDGET'
 export const REMOVE_WIDGET = 'widgets/REMOVE_WIDGET'
 export const LOAD_WIDGETS = 'widgets/LOAD_WIDGETS'
-export const SYNC_WIDGETS = 'widgets/SYNC_WIDGETS'
 export const UPDATE_WIDGET = 'widgets/UPDATE_WIDGET'
 export const UPDATE_WIDGETS = 'widgets/UPDATE_WIDGETS'
 
 export const getWidgets = (state) => state[NAME]
 export const getWidget = (state, id) => state.filter((favorite) => favorite.id === id)[0]
 export const removeWidgetById = (state, id) => state.filter((favorite) => favorite.id !== id)
-const versionSize = 20
 
 // reducer
-// const initialState = Object.assign({}, script))
+const initialState = []
 
 export default function reducer (state = initialState, action) {
   switch (action.type) {
-    case REMOVE_WIDG:
+    case REMOVE_WIDGET:
       return removeWidgetById(state, action.id)
     case ADD_WIDGET:
-      return state.concat([{id: uuid.v4(), content: action.cmd}])
-    case UPDATE_WIDG:
-      const mergedWidget = Object.assign({}, getWidget(state, action.id), {content: action.cmd})
+      return state.concat([{id: uuid.v4(), query: action.cmd}])
+    case UPDATE_WIDGET:
+      const mergedWidget = Object.assign({}, getWidget(state, action.id), {query: action.query})
       const updatedWidgets = state.map((_) => _.id === action.id ? mergedWidget : _)
-      return mergeWidgets(initialState, updatedWidgets)
-    case LOAD_WIDGS:
-    case UPDATE_WIDGS:
-      return mergeWidgets(initialState, action.favorites)
+      return mergeListsById(initialState, updatedWidgets)
+    case LOAD_WIDGETS:
+    case UPDATE_WIDGETS:
+      return mergeListsById(initialState, action.favorites)
     case USER_CLEAR:
       return initialState
     case APP_START:
-      return mergeWidgets(initialState, state)
+      return mergeListsById(initialState, state)
     default:
       return state
   }
@@ -64,7 +61,7 @@ export default function reducer (state = initialState, action) {
 
 export function removeWidget (id) {
   return {
-    type: REMOVE_WIDG,
+    type: REMOVE_WIDGET,
     id
   }
 }
@@ -76,62 +73,20 @@ export function addWidget (query) {
 }
 export function loadWidgets (favorites) {
   return {
-    type: LOAD_WIDGS,
-    favorites
-  }
-}
-export function syncWidgets (favorites) {
-  return {
-    type: SYNC_WIDGS,
+    type: LOAD_WIDGETS,
     favorites
   }
 }
 export function updateWidget (id, cmd) {
   return {
-    type: UPDATE_WIDG,
+    type: UPDATE_WIDGET,
     id,
     cmd
   }
 }
 export function updateWidgets (favorites) {
   return {
-    type: UPDATE_WIDGS,
+    type: UPDATE_WIDGETS,
     favorites
-  }
-}
-
-export const composeDocumentsToSync = (store, syncValue) => {
-  const documents = syncValue.syncObj.documents
-  const favorites = getWidgets(store.getState()).filter(fav => !fav.isStatic)
-
-  let newDocuments = [{
-    'client': getBrowserName(),
-    'data': favorites,
-    'syncedAt': Date.now()
-  }].concat(documents.slice(0, versionSize))
-
-  return newDocuments
-}
-
-export const mergeWidgets = (list1, list2) => {
-  return list1.concat(list2.filter(favInList2 => list1.findIndex(favInList1 => favInList1.id === favInList2.id) < 0))
-}
-
-export const favoritesToLoad = (action, store) => {
-  let favoritesFromSync = (action.obj.syncObj && action.obj.syncObj.documents.length > 0)
-    ? (action.obj.syncObj.documents[0].data || [])
-    : null
-
-  if (favoritesFromSync) {
-    const existingFavs = getWidgets(store.getState())
-    const allWidgets = mergeWidgets(favoritesFromSync, existingFavs)
-
-    if (existingFavs.every(exFav => exFav.isStatic || favoritesFromSync.findIndex(syncFav => syncFav.id === exFav.id) >= 0)) {
-      return { favorites: allWidgets, syncWidgets: false, loadWidgets: true }
-    } else {
-      return { favorites: allWidgets, syncWidgets: true, loadWidgets: true }
-    }
-  } else {
-    return { favorites: null, syncWidgets: false, loadWidgets: false }
   }
 }

@@ -61,15 +61,13 @@ export class Widget extends Component {
     switch (this.props.type) {
       case 'GAUGE':
         const used = (this.state.data[this.state.data.length - 1]) ? this.state.data[this.state.data.length - 1].count : 0
-        console.log('used', this.state.data, this.state.data.length, this.state.data[this.state.data.length], used)
         const data = [{name: 'used', value: used}, {name: 'available', value: 100 - used}]
 
         return (
           <PieChart width={800} height={400}>
             <Pie isAnimationActive={this.props.isStaticData || false} data={data} startAngle={180} endAngle={0} cx={200} cy={200} outerRadius={80} fill='#8884d8' label>
-            {
+              {
               data.map((entry, index) => {
-                console.log('entry', entry)
                 return (entry.name === 'used') ? <Cell fill='#8884d8' /> : <Cell fill='transparent' />
               })
             }

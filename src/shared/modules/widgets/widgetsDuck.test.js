@@ -20,82 +20,82 @@
 
 /* global test, expect */
 import uuid from 'uuid'
-import reducer, * as favorites from './favoritesDuck'
+import reducer, * as widgets from './widgetsDuck'
 
-describe('favorites reducer', () => {
-  test('should update state for favorites when favorite is removed and only one item is in the list', () => {
-    const favoriteScript = { name: 'Test1', content: 'match (n) return n limit 1' }
-    const initialState = [favoriteScript]
+describe('widgets reducer', () => {
+  test('should update state for widgets when widget is removed and only one item is in the list', () => {
+    const widget = { query: 'foobar' }
+    const initialState = [widget]
     const action = {
-      type: favorites.REMOVE_FAVORITE,
-      favorites: [favoriteScript]
+      type: widgets.REMOVE_WIDGET,
+      widget: [widget]
     }
     const nextState = reducer(initialState, action)
     expect(nextState).toEqual([])
   })
 
-  test('should update state for favorites when favorite is removed when there is more than one item in the list', () => {
-    const favoriteScript1 = { id: uuid.v4(), name: 'Test1', content: 'match (n) return n limit 1' }
-    const favoriteScript2 = { id: uuid.v4(), name: 'Test2', content: 'match (a) return a' }
-    const favoriteScript3 = { id: uuid.v4(), name: 'Test3', content: 'match (a) return a' }
+  test('should update state for widgets when widget is removed when there is more than one item in the list', () => {
+    const widget1 = { id: uuid.v4(), query: 'a' }
+    const widget2 = { id: uuid.v4(), query: 'b' }
+    const widget3 = { id: uuid.v4(), query: 'c' }
     const initialState = [
-      favoriteScript1,
-      favoriteScript2,
-      favoriteScript3
+      widget1,
+      widget2,
+      widget3
     ]
     const action = {
-      type: favorites.REMOVE_FAVORITE,
-      id: favoriteScript2.id
+      type: widgets.REMOVE_WIDGET,
+      id: widget2.id
     }
     const nextState = reducer(initialState, action)
-    expect(nextState).toEqual([favoriteScript1, favoriteScript3])
+    expect(nextState).toEqual([widget1, widget3])
   })
-  test('should return favorite by id', () => {
-    const favoriteScript1 = { id: uuid.v4(), name: 'Test1', content: 'match (n) return n limit 1' }
-    const favoriteScript2 = { id: uuid.v4(), name: 'Test2', content: 'match (a) return a' }
+  test('should return widget by id', () => {
+    const widget1 = { id: uuid.v4(), query: 'a' }
+    const widget2 = { id: uuid.v4(), query: 'b' }
     const initialState = [
-      favoriteScript1,
-      favoriteScript2
+      widget1,
+      widget2
     ]
 
     const nextState = reducer(initialState, {})
-    expect(favorites.getFavorite(nextState, favoriteScript1.id)).toEqual(favoriteScript1)
-    expect(favorites.getFavorite(nextState, favoriteScript2.id)).toEqual(favoriteScript2)
+    expect(widgets.getWidget(nextState, widget1.id)).toEqual(widget1)
+    expect(widgets.getWidget(nextState, widget2.id)).toEqual(widget2)
   })
-  test('should update favorite by id', () => {
-    const favoriteScript1 = { id: uuid.v4(), name: 'Test1', content: 'match (n) return n limit 1' }
-    const favoriteScript2 = { id: uuid.v4(), name: 'Test2', content: 'match (a) return a' }
+  test.only('should update widget by id', () => {
+    const widget1 = { id: uuid.v4(), query: 'a' }
+    const widget2 = { id: uuid.v4(), query: 'b' }
     const initialState = [
-      favoriteScript1,
-      favoriteScript2
+      widget1,
+      widget2
     ]
     const newContent = '//Foobar'
     const action = {
-      type: favorites.UPDATE_FAVORITE,
-      id: favoriteScript1.id,
-      cmd: newContent
+      type: widgets.UPDATE_WIDGET,
+      id: widget1.id,
+      query: newContent
     }
     const nextState = reducer(initialState, action)
-    expect(favorites.getFavorite(nextState, favoriteScript1.id)).toEqual({...favoriteScript1, content: newContent})
-    expect(favorites.getFavorite(nextState, favoriteScript2.id)).toEqual(favoriteScript2)
+    expect(widgets.getWidget(nextState, widget1.id)).toEqual({...widget1, query: newContent})
+    expect(widgets.getWidget(nextState, widget2.id)).toEqual(widget2)
   })
 })
 
-describe('favorites actions', () => {
-  test('should handle loading favorites', () => {
-    const favs = 'favorites object'
+describe('widget actions', () => {
+  test('should handle loading widgets', () => {
+    const widgets = [{}]
     const expected = {
-      type: favorites.LOAD_FAVORITES,
-      favorites: favs
+      type: widgets.LOAD_WIDGETS,
+      widgets
     }
-    expect(favorites.loadFavorites(favs)).toEqual(expected)
+    expect(widgets.loadWidgets(widgets)).toEqual(expected)
   })
-  test('should handle removing favorite', () => {
+  test('should handle removing widget', () => {
     const id = uuid.v4()
     const expected = {
-      type: favorites.REMOVE_FAVORITE,
+      type: widgets.REMOVE_WIDGET,
       id
     }
-    expect(favorites.removeFavorite(id)).toEqual(expected)
+    expect(widgets.removeWidget(id)).toEqual(expected)
   })
 })

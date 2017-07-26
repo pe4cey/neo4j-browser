@@ -20,7 +20,7 @@
 
 import uuid from 'uuid'
 import { USER_CLEAR, APP_START } from 'shared/modules/app/appDuck'
-import { getBrowserName } from 'services/utils'
+import { getBrowserName, mergeListsById } from 'services/utils'
 import { scripts as staticScriptsList } from './staticScripts'
 
 export const NAME = 'documents'
@@ -49,14 +49,14 @@ export default function reducer (state = initialState, action) {
     case UPDATE_FAVORITE:
       const mergedFavorite = Object.assign({}, getFavorite(state, action.id), {content: action.cmd})
       const updatedFavorites = state.map((_) => _.id === action.id ? mergedFavorite : _)
-      return mergeFavorites(initialState, updatedFavorites)
+      return mergeListsById(initialState, updatedFavorites)
     case LOAD_FAVORITES:
     case UPDATE_FAVORITES:
-      return mergeFavorites(initialState, action.favorites)
+      return mergeListsById(initialState, action.favorites)
     case USER_CLEAR:
       return initialState
     case APP_START:
-      return mergeFavorites(initialState, state)
+      return mergeListsById(initialState, state)
     default:
       return state
   }
@@ -113,10 +113,6 @@ export const composeDocumentsToSync = (store, syncValue) => {
   return newDocuments
 }
 
-export const mergeFavorites = (list1, list2) => {
-  return list1.concat(list2.filter(favInList2 => list1.findIndex(favInList1 => favInList1.id === favInList2.id) < 0))
-}
-
 export const favoritesToLoad = (action, store) => {
   let favoritesFromSync = (action.obj.syncObj && action.obj.syncObj.documents.length > 0)
     ? (action.obj.syncObj.documents[0].data || [])
@@ -124,7 +120,7 @@ export const favoritesToLoad = (action, store) => {
 
   if (favoritesFromSync) {
     const existingFavs = getFavorites(store.getState())
-    const allFavorites = mergeFavorites(favoritesFromSync, existingFavs)
+    const allFavorites = mergeListsById(favoritesFromSync, existingFavs)
 
     if (existingFavs.every(exFav => exFav.isStatic || favoritesFromSync.findIndex(syncFav => syncFav.id === exFav.id) >= 0)) {
       return { favorites: allFavorites, syncFavorites: false, loadFavorites: true }
