@@ -19,11 +19,13 @@
  */
 
 import { withBus } from 'preact-suber'
+import { connect } from 'preact-redux'
 
 import Widget from 'browser/modules/Dashboard/Widget'
 import SingleNumberWidget from 'browser/modules/Dashboard/SingleNumberWidget'
 import SingleNumberGauge from 'browser/modules/Dashboard/SingleNumberGauge'
 import { CYPHER_REQUEST } from 'shared/modules/cypher/cypherDuck'
+import { getWidgets } from 'shared/modules/widgets/widgetsDuck'
 
 const dashboard = (props) => {
   const values = ['ProcessCpuLoad', 'SystemCpuLoad']
@@ -48,11 +50,19 @@ const dashboard = (props) => {
       margins={{left: 50, right: 50, top: 10, bottom: 50}}
     />)
   })
+  const userWidgets = props.getWidgets.map(widget => {
+    return (<SingleNumberWidget value={widget.query} query={widget.query} />)
+  })
   return (
     <table>
       <tr>
         {
           widgets.map(w => <td>{w}</td>)
+        }
+      </tr>
+      <tr>
+        {
+          (userWidgets.length > 0) ? userWidgets.map(w => <td>{w}</td>) : 'No widgets configured'
         }
       </tr>
       <tr>
@@ -66,4 +76,10 @@ const dashboard = (props) => {
   )
 }
 
-export default withBus(dashboard)
+const mapStateToProps = (state) => {
+  return {
+    getWidgets: getWidgets(state) || []
+  }
+}
+
+export default withBus(connect(mapStateToProps, null)(dashboard))

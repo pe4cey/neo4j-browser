@@ -21,7 +21,7 @@
 import { Component } from 'preact'
 import { connect } from 'preact-redux'
 
-import { addWidget } from 'shared/modules/widgets/widgetsDuck'
+import { addWidget, removeWidget, getWidgets } from 'shared/modules/widgets/widgetsDuck'
 
 export class AddWidget extends Component {
   constructor (props) {
@@ -54,6 +54,14 @@ export class AddWidget extends Component {
         }
         <br />
         <button onClick={this.addEmptyEntry.bind(this)}>Add</button>
+        {this.props.getWidgets.map(_ => {
+          return (
+            <div>
+              {_.query}
+              <button onClick={() => this.props.removeWidget(_.id)}>Delete</button>
+            </div>
+          )
+        })}
       </div>
     )
   }
@@ -63,8 +71,17 @@ const mapDispatchToProps = (dispatch) => {
   return {
     saveWidgetQuery: (query) => {
       dispatch(addWidget(query))
+    },
+    removeWidget: (id) => {
+      dispatch(removeWidget(id))
     }
   }
 }
 
-export default connect(null, mapDispatchToProps)(AddWidget)
+const mapStateToProps = (state) => {
+  return {
+    getWidgets: getWidgets(state)
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddWidget)

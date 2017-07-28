@@ -42,7 +42,7 @@ export default function reducer (state = initialState, action) {
     case REMOVE_WIDGET:
       return removeWidgetById(state, action.id)
     case ADD_WIDGET:
-      return state.concat([{id: uuid.v4(), query: action.cmd}])
+      return state.concat([{id: uuid.v4(), query: action.query}])
     case UPDATE_WIDGET:
       const mergedWidget = Object.assign({}, getWidget(state, action.id), {query: action.query})
       const updatedWidgets = state.map((_) => _.id === action.id ? mergedWidget : _)

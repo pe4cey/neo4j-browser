@@ -28,7 +28,8 @@ import {
   Tooltip,
   PieChart,
   Pie,
-  Cell
+  Cell,
+  YAxis
 } from 'precharts'
 
 export class Widget extends Component {
@@ -81,6 +82,7 @@ export class Widget extends Component {
             <ComposedChart width={500} height={200} data={this.state.data}>
               <CartesianGrid strokeDasharray='3 3' />
               <Area isAnimationActive={this.props.isStaticData || false} dataKey='count' fill='green' opacity={0.3} />
+              <YAxis domain={[0, 100]} />
               <Tooltip />
             </ComposedChart>
           </StyledWidgetContainer>

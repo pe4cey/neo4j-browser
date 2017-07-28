@@ -25,6 +25,7 @@ import historyReducer, { NAME as history } from 'shared/modules/history/historyD
 import userReducer, { NAME as currentUser } from 'shared/modules/currentUser/currentUserDuck'
 import dbMetaReducer, { NAME as dbMeta } from 'shared/modules/dbMeta/dbMetaDuck'
 import favoritesReducer, { NAME as documents } from 'shared/modules/favorites/favoritesDuck'
+import widgetsReducer, { NAME as widgets } from 'shared/modules/widgets/widgetsDuck'
 import connectionsReducer, { NAME as connections } from 'shared/modules/connections/connectionsDuck'
 import sidebarReducer, { NAME as sidebar } from 'shared/modules/sidebar/sidebarDuck'
 import requestsReducer, { NAME as requests } from 'shared/modules/requests/requestsDuck'
@@ -45,6 +46,7 @@ export default {
   [currentUser]: userReducer,
   [dbMeta]: dbMetaReducer,
   [documents]: favoritesReducer,
+  [widgets]: widgetsReducer,
   [folders]: foldersReducer,
   [sidebar]: sidebarReducer,
   [params]: paramsReducer,

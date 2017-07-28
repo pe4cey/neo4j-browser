@@ -42,7 +42,8 @@ applyKeys(
   'folders',
   'grass',
   'syncConsent',
-  'udc'
+  'udc',
+  'widgets'
 )
 
 // Create suber bus
