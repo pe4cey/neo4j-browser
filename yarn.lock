@@ -5467,6 +5467,12 @@ preact-compat@3.x, preact-compat@^3.11.0, preact-compat@^3.13.1:
     prop-types "^15.5.8"
     standalone-react-addons-pure-render-mixin "^0.1.1"
 
+preact-markup@^1.6.0:
+  version "1.6.0"
+  resolved "https://neo.jfrog.io/neo/api/npm/npm/preact-markup/-/preact-markup-1.6.0.tgz#9f4d285761531dd75af3e1d2cd121505b09986bc"
+  optionalDependencies:
+    preact "*"
+
 preact-redux@^2.0.0:
   version "2.0.1"
   resolved "https://neo.jfrog.io/neo/api/npm/npm/preact-redux/-/preact-redux-2.0.1.tgz#e60df461b1a287f92ad7988fce1fdaffa5e3842e"
@@ -5492,7 +5498,7 @@ preact-transition-group@^1.1.0:
   version "1.1.1"
   resolved "https://neo.jfrog.io/neo/api/npm/npm/preact-transition-group/-/preact-transition-group-1.1.1.tgz#f0a49327ea515ece34ea2be864c4a7d29e5d6e10"
 
-preact@8.x, preact@^8.1.0:
+preact@*, preact@8.x, preact@^8.1.0:
   version "8.1.0"
   resolved "https://neo.jfrog.io/neo/api/npm/npm/preact/-/preact-8.1.0.tgz#f035b808eebb74e46d56246b02ca0f190b6d6574"
 

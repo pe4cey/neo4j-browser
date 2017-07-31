@@ -20,9 +20,14 @@
 
 import styles from './style.css'
 import { StyledSlide } from './styled.jsx'
+import Markup from 'preact-markup'
 
 const Slide = ({html}) => {
-  return (<StyledSlide className={styles.slide} dangerouslySetInnerHTML={{__html: html}} />)
+  return (
+    <StyledSlide className={styles.slide}>
+      <Markup markup={html} type='html'/>
+    </StyledSlide>
+  )
 }
 
 export default Slide
