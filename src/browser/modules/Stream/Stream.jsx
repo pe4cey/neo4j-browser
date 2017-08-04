@@ -26,6 +26,7 @@ import CypherFrame from './CypherFrame/index'
 import HistoryFrame from './HistoryFrame'
 import PlayFrame from './PlayFrame'
 import Frame from './Frame'
+import HtmlFrame from './HtmlFrame'
 import PreFrame from './PreFrame'
 import ParamsFrame from './ParamsFrame'
 import ErrorFrame from './ErrorFrame'
@@ -47,6 +48,7 @@ import { deepEquals } from 'services/utils'
 
 const getFrame = (type) => {
   const trans = {
+    html: HtmlFrame,
     error: ErrorFrame,
     cypher: CypherFrame,
     'user-list': UserList,

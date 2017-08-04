@@ -45,6 +45,13 @@ const availableCommands = [{
     put(frames.clear())
   }
 }, {
+  name: 'dashboard',
+  match: (cmd) => /^dashboard(\s|$)/.test(cmd),
+  exec: function (action, cmdchar, put, store) {
+    debugger
+    put(frames.add({...action}))
+  }
+}, {
   name: 'config',
   match: (cmd) => /^config(\s|$)/.test(cmd),
   exec: function (action, cmdchar, put, store) {

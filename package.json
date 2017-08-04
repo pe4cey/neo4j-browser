@@ -132,6 +132,7 @@
     "node-noop": "^1.0.0",
     "preact": "^8.1.0",
     "preact-compat": "^3.13.1",
+    "preact-markup": "^1.6.0",
     "preact-redux": "^2.0.0",
     "preact-suber": "^1.0.3",
     "precharts": "^1.4.0",
