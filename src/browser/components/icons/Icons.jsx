@@ -79,6 +79,7 @@ export const DatabaseIcon = ({isOpen, connectionState}) => (<IconContainer isOpe
 />)
 export const FavoritesIcon = ({isOpen}) => (<IconContainer isOpen={isOpen} activeStyle={styles.white} inactiveStyle={styles.inactive} className='sl sl-star' />)
 export const DocumentsIcon = ({isOpen}) => (<IconContainer isOpen={isOpen} activeStyle={styles.white} inactiveStyle={styles.inactive} className='sl sl-book' />)
+export const DashboardIcon = ({isOpen}) => (<IconContainer isOpen={isOpen} activeStyle={styles.white} inactiveStyle={styles.inactive} className='sl sl-business-chart' />)
 
 export const CloudIcon = ({isOpen}) => (<IconContainer isOpen={isOpen} activeStyle={styles.successGreen} inactiveStyle={styles.inactive} className='sl sl-cloud-checked' />)
 export const CloudDisconnectedIcon = ({isOpen}) => (<IconContainer isOpen={isOpen} activeStyle={styles.warningRed} inactiveStyle={styles.warningRed} className='sl sl-cloud-delete' />)

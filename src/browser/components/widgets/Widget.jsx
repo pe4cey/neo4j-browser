@@ -79,7 +79,7 @@ export class Widget extends Component {
         return (
           <StyledWidgetContainer>
             <h4>{this.props.title}</h4>
-            <ComposedChart width={500} height={200} data={this.state.data}>
+            <ComposedChart width={300} height={150} data={this.state.data}>
               <CartesianGrid strokeDasharray='3 3' />
               <Area isAnimationActive={this.props.isStaticData || false} dataKey='count' fill='green' opacity={0.3} />
               <YAxis domain={[0, 100]} />

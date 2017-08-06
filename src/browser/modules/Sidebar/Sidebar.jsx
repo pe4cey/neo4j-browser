@@ -26,6 +26,7 @@ import Documents from './Documents'
 import About from './About'
 import TabNavigation from 'browser-components/TabNavigation/Navigation'
 import Settings from './Settings'
+import Slide from 'browser/modules/Guides/Slide'
 import BrowserSync from './../Sync/BrowserSync'
 import { PENDING_STATE, CONNECTED_STATE, DISCONNECTED_STATE } from 'shared/modules/connections/connectionsDuck'
 
@@ -33,10 +34,14 @@ import {
   DatabaseIcon,
   FavoritesIcon,
   DocumentsIcon,
+  DashboardIcon,
   CloudSyncIcon,
   SettingsIcon,
   AboutIcon
 } from 'browser-components/icons/Icons'
+
+const CarouselDrawer = () =>
+  <Slide html={"<single-number-widget query='match (n) return count(n) as value' />"} />
 
 class Sidebar extends Component {
   render () {
@@ -50,7 +55,8 @@ class Sidebar extends Component {
     const topNavItemsList = [
       {name: 'DB', title: 'Database', icon: (isOpen) => <DatabaseIcon isOpen={isOpen} connectionState={this.props.neo4jConnectionState} />, content: DatabaseDrawer},
       {name: 'Favorites', title: 'Favorites', icon: (isOpen) => <FavoritesIcon isOpen={isOpen} />, content: FavoritesDrawer},
-      {name: 'Documents', title: 'Documentation', icon: (isOpen) => <DocumentsIcon isOpen={isOpen} />, content: DocumentsDrawer}
+      {name: 'Documents', title: 'Documentation', icon: (isOpen) => <DocumentsIcon isOpen={isOpen} />, content: DocumentsDrawer},
+      {name: 'About', title: 'About Neo4j', icon: (isOpen) => <DashboardIcon isOpen={isOpen} />, content: CarouselDrawer}
     ]
     const bottomNavItemsList = [
       {name: 'Sync', title: 'Cloud Services', icon: (isOpen) => <CloudSyncIcon isOpen={isOpen} connected={this.props.syncConnected} />, content: BrowserSync},
