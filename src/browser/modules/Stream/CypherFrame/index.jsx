@@ -160,7 +160,11 @@ export class CypherFrame extends Component {
           <WarningsView {...this.state} result={result} setParentState={this.setState.bind(this)} />
         </Display>
         <Display if={this.state.openView === viewTypes.PLAN} lazy>
-          <PlanView {...this.state} result={result} setParentState={this.setState.bind(this)} />
+          <PlanView {...this.state} result={result} setParentState={this.setState.bind(this)}
+            assignVisElement={(svgElement, graphElement) => {
+              this.visElement = {svgElement, graphElement, type: 'plan'}
+              this.setState({hasVis: true})
+            }} />
         </Display>
         <Display if={this.state.openView === viewTypes.VISUALIZATION} lazy>
           <VisualizationConnectedBus
@@ -169,7 +173,7 @@ export class CypherFrame extends Component {
             setParentState={this.setState.bind(this)}
             frameHeight={this.state.frameHeight}
             assignVisElement={(svgElement, graphElement) => {
-              this.visElement = {svgElement, graphElement}
+              this.visElement = {svgElement, graphElement, type: 'graph'}
               this.setState({hasVis: true})
             }}
             initialNodeDisplay={this.props.initialNodeDisplay}
@@ -218,9 +222,9 @@ export class CypherFrame extends Component {
         header={frame}
         contents={frameContents}
         statusbar={statusBar}
-        exportData={(this.state.openView !== viewTypes.VISUALIZATION) ? this.state.exportData : null}
+        exportData={(this.state.openView !== viewTypes.VISUALIZATION && this.state.openView !== viewTypes.PLAN) ? this.state.exportData : null}
         onResize={this.onResize.bind(this)}
-        visElement={(this.state.hasVis && (this.state.openView === viewTypes.VISUALIZATION)) ? this.visElement : null}
+        visElement={(this.state.hasVis && (this.state.openView === viewTypes.VISUALIZATION || this.state.openView === viewTypes.PLAN)) ? this.visElement : null}
       />
     )
   }

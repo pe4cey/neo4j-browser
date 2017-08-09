@@ -49,6 +49,8 @@ export class PlanView extends Component {
     this.ensureToggleExpand(props)
   }
   shouldComponentUpdate (props, state) {
+    this.props.assignVisElement && this.props.assignVisElement(this.el, this.plan)
+
     if (this.props.result === undefined) return true
     return !deepEquals(props.result.summary, this.props.result.summary) ||
       !shallowEquals(state, this.state) ||
@@ -65,8 +67,14 @@ export class PlanView extends Component {
   planInit (el) {
     if (el != null && !this.plan) {
       const NeoConstructor = neo.queryPlan
-      this.plan = new NeoConstructor(el)
+      this.el = el
+      this.plan = new NeoConstructor(this.el)
       this.plan.display(this.state.extractedPlan)
+      this.plan.boundingBox = () => {
+        return this.el.getBBox()
+      }
+
+      this.props.assignVisElement && this.props.assignVisElement(this.el, this.plan)
     }
   }
   ensureToggleExpand (props) {
