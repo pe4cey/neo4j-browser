@@ -31,6 +31,8 @@ export const getInitCmd = state => state[NAME].initCmd || initialState.initCmd
 export const getTheme = state => state[NAME].theme || initialState.theme
 export const getUseBoltRouting = state =>
   state[NAME].useBoltRouting || initialState.useBoltRouting
+export const getUseHttpConnection = state =>
+  state[NAME].useHttpConnection || initialState.useHttpConnection
 export const getBrowserSyncConfig = (
   state,
   host = getSettings(state).browserSyncDebugServer
@@ -66,6 +68,7 @@ const initialState = {
   maxHistory: 30,
   theme: 'normal',
   useBoltRouting: false,
+  useHttpConnection: false,
   initCmd: ':play start',
   initialNodeDisplay: 300,
   maxNeighbours: 100,
@@ -87,7 +90,7 @@ export default function settings (state = initialState, action) {
 
   switch (action.type) {
     case UPDATE:
-      return Object.assign({}, state, action.state)
+      return { ...state, ...action.state }
     case REPLACE:
       return Object.assign({}, { ...initialState }, action.state)
     case USER_CLEAR:

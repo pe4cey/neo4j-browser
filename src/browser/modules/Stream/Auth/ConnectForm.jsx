@@ -51,7 +51,9 @@ export default class ConnectForm extends Component {
     return (
       <StyledConnectionForm>
         <StyledConnectionFormEntry>
-          <StyledConnectionLabel>Host</StyledConnectionLabel>
+          <StyledConnectionLabel>
+            Host (protocol: {this.props.useHttpConnection ? 'http' : 'bolt'})
+          </StyledConnectionLabel>
           <StyledConnectionTextInput
             data-test-id='boltaddress'
             innerRef={el => this.formKeyHandler.registerInput(el, 1)}

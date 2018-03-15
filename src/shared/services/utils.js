@@ -78,14 +78,6 @@ export const isRoutingHost = host => {
   return /^bolt\+routing:\/\//.test(host)
 }
 
-export const toBoltHost = host => {
-  return (
-    'bolt://' +
-    (host || '') // prepend with bolt://
-      .replace(/(.*(?=@+)@|(bolt|bolt\+routing):\/\/)/, '') // remove bolt or bolt+routing protocol and auth info
-  )
-}
-
 export const hostIsAllowed = (uri, whitelist = null) => {
   if (whitelist === '*') return true
   const urlInfo = getUrlInfo(uri)
