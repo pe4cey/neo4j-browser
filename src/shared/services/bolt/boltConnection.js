@@ -65,7 +65,13 @@ export const getDriver = (
   protocol,
   onConnectFail = () => {}
 ) => {
-  const boltHost = protocol + (host || '').split('bolt://').join('')
+  const boltHost =
+    protocol +
+    (host || '')
+      .split('bolt://')
+      .join('')
+      .split('http://')
+      .join('')
   try {
     const res = neo4j.driver(boltHost, auth, opts)
     return res
@@ -87,7 +93,7 @@ export const getDriversObj = (props, opts = {}, onConnectFail = () => {}) => {
       props.host,
       auth,
       opts,
-      'bolt://',
+      props.useHttpConnection ? 'http://' : 'bolt://',
       onConnectFail
     )
     return driversObj.direct
@@ -99,7 +105,7 @@ export const getDriversObj = (props, opts = {}, onConnectFail = () => {}) => {
       props.host,
       auth,
       opts,
-      'bolt+routing://',
+      props.useHttpConnection ? 'http://' : 'bolt+routing://',
       onConnectFail
     )
     return driversObj.routed
@@ -125,7 +131,12 @@ export function directConnect (
       opts.withoutCredentials || !props.username
         ? neo4j.auth.basic('', '')
         : neo4j.auth.basic(props.username, props.password)
-    const driver = getDriver(props.host, creds, opts, 'bolt://')
+    const driver = getDriver(
+      props.host,
+      creds,
+      opts,
+      props.useHttpConnection ? 'http://' : 'bolt://'
+    )
     driver.onError = e => {
       onLostConnection(e)
       reject(e)

@@ -30,13 +30,14 @@ import {
 } from 'shared/modules/connections/connectionsDuck'
 import {
   getInitCmd,
-  updateBoltRouting
+  updateBoltRouting,
+  getUseHttpConnection
 } from 'shared/modules/settings/settingsDuck'
 import { executeSystemCommand } from 'shared/modules/commands/commandsDuck'
 import { shouldRetainConnectionCredentials } from 'shared/modules/dbMeta/dbMetaDuck'
 import { FORCE_CHANGE_PASSWORD } from 'shared/modules/cypher/cypherDuck'
 import { changeCurrentUsersPasswordQueryObj } from 'shared/modules/cypher/procedureFactory'
-import { toBoltHost, isRoutingHost } from 'services/utils'
+import { isRoutingHost } from 'services/utils'
 import { getEncryptionMode } from 'services/bolt/boltHelpers'
 
 import ConnectForm from './ConnectForm'
@@ -61,18 +62,24 @@ export class ConnectionForm extends Component {
   }
   connect (doneFn = () => {}) {
     this.props.error({})
-    this.props.bus.self(CONNECT, this.state, res => {
-      doneFn()
-      if (res.success) {
-        this.saveAndStart()
-      } else {
-        if (res.error.code === 'Neo.ClientError.Security.CredentialsExpired') {
-          this.setState({ passwordChangeNeeded: true })
+    this.props.bus.self(
+      CONNECT,
+      { ...this.state, useHttpConnection: this.props.useHttpConnection },
+      res => {
+        doneFn()
+        if (res.success) {
+          this.saveAndStart()
         } else {
-          this.props.error(res.error)
+          if (
+            res.error.code === 'Neo.ClientError.Security.CredentialsExpired'
+          ) {
+            this.setState({ passwordChangeNeeded: true })
+          } else {
+            this.props.error(res.error)
+          }
         }
       }
-    })
+    )
   }
   onUsernameChange (event) {
     const username = event.target.value
@@ -87,7 +94,7 @@ export class ConnectionForm extends Component {
   onHostChange (event) {
     const host = event.target.value
     this.setState({
-      host: toBoltHost(host),
+      host: host,
       hostInputVal: host,
       useBoltRouting: isRoutingHost(host)
     })
@@ -189,6 +196,7 @@ export class ConnectionForm extends Component {
           username={this.state.username}
           password={this.state.password}
           used={this.state.used}
+          useHttpConnection={this.props.useHttpConnection}
         />
       )
     }
@@ -199,6 +207,7 @@ export class ConnectionForm extends Component {
 const mapStateToProps = state => {
   return {
     initCmd: getInitCmd(state),
+    useHttpConnection: getUseHttpConnection(state),
     activeConnection: getActiveConnection(state),
     activeConnectionData: getActiveConnectionData(state),
     storeCredentials: shouldRetainConnectionCredentials(state)
@@ -222,6 +231,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     activeConnection: stateProps.activeConnection,
     activeConnectionData: stateProps.activeConnectionData,
     storeCredentials: stateProps.storeCredentials,
+    useHttpConnection: stateProps.useHttpConnection,
     ...ownProps,
     ...dispatchProps,
     executeInitCmd: () => {

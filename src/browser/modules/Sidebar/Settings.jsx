@@ -76,6 +76,13 @@ const visualSettings = [
           tooltip: 'Use bolt+routing protocol when in a causal cluster.',
           type: 'checkbox'
         }
+      },
+      {
+        useHttpConnection: {
+          displayName: 'Use http (no causal cluster support)',
+          tooltip: 'Use http to connect to neo4j',
+          type: 'checkbox'
+        }
       }
     ]
   },
