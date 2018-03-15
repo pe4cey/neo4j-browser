@@ -5725,9 +5725,15 @@ negotiator@0.6.1:
   version "0.6.1"
   resolved "https://neo.jfrog.io/neo/api/npm/npm/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
 
+<<<<<<< HEAD
 neo4j-driver@^1.6.1:
   version "1.6.1"
   resolved "https://neo.jfrog.io/neo/api/npm/npm/neo4j-driver/-/neo4j-driver-1.6.1.tgz?dl=https://registry.npmjs.org/neo4j-driver/-/neo4j-driver-1.6.1.tgz#22a9b383494c15614045a1bc15666b6bb1814b36"
+=======
+neo4j-driver@^1.6.0-alpha01:
+  version "1.6.0-alpha01"
+  resolved "https://neo.jfrog.io/neo/api/npm/npm/neo4j-driver/-/neo4j-driver-1.6.0-alpha01.tgz#1356e5888f37a4eff5017156ca973aa281c55e7d"
+>>>>>>> Bump neo4j driver to 1.6.0-alpha01
   dependencies:
     babel-runtime "^6.18.0"
     uri-js "^4.2.1"
