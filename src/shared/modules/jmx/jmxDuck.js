@@ -113,17 +113,19 @@ export const jmxEpic = (some$, store) =>
     .ofType(UPDATE_CONNECTION_STATE)
     .filter(s => s.state === CONNECTED_STATE)
     .merge(some$.ofType(CONNECTION_SUCCESS))
-    .mergeMap(() => {
-      return Rx.Observable
-        .timer(0, 20000)
-        .merge(some$.ofType(FORCE_FETCH))
-        .mergeMap(() =>
-          Rx.Observable
-            .fromPromise(fetchJmxValues())
-            .catch(e => Rx.Observable.of(null))
-        )
-        .filter(r => r)
-        .do(res => store.dispatch(updateJmxValues(res)))
-        .takeUntil(some$.ofType(LOST_CONNECTION).filter(connectionLossFilter))
-        .mapTo({ type: 'NOOP' })
+    .switchMap(() => {
+      return (
+        Rx.Observable
+          .timer(0, 20000)
+          .merge(some$.ofType(FORCE_FETCH))
+          .switchMap(() =>
+            Rx.Observable
+              .fromPromise(fetchJmxValues())
+              .catch(e => Rx.Observable.of(null))
+          )
+          // .filter(r => r)
+          // .switchMap(res => store.dispatch(updateJmxValues(res)))
+          // .takeUntil(some$.ofType(LOST_CONNECTION).filter(connectionLossFilter))
+          .map(r => updateJmxValues(r))
+      )
     })
