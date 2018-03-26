@@ -50,6 +50,7 @@ import * as schemaConvert from './editorSchemaConverter'
 import cypherFunctions from './cypher/functions'
 import consoleCommands from './language/consoleCommands'
 import Render from 'browser-components/Render'
+import ParametersViewer from './ParametersViewer'
 
 export class Editor extends Component {
   constructor (props) {
@@ -71,6 +72,10 @@ export class Editor extends Component {
       nextState.contentId === this.state.contentId &&
       nextState.editorHeight === this.state.editorHeight &&
       shallowEquals(nextState.notifications, this.state.notifications) &&
+      shallowEquals(
+        nextState.parametersFromEditor,
+        this.state.parametersFromEditor
+      ) &&
       deepEquals(nextProps.schema, this.props.schema)
     )
   }
@@ -163,6 +168,7 @@ export class Editor extends Component {
   }
 
   triggerAutocompletion (cm, changed) {
+    console.log('change')
     if (changed.text.length !== 1 || !this.props.enableEditorAutocomplete) {
       return
     }
@@ -180,6 +186,21 @@ export class Editor extends Component {
     if (triggerAutocompletion) {
       cm.execCommand('autocomplete')
     }
+    this.fetchParameters()
+  }
+
+  fetchParameters () {
+    if (this.codeMirror) {
+      this.setState({
+        parametersFromEditor: this.codeMirror.editorSupport.referencesProviders
+          .ParameterNameContext
+      })
+    }
+  }
+
+  onChange (cm, changed) {
+    this.triggerAutocompletion(cm, changed)
+    this.fetchParameters()
   }
 
   componentWillMount () {
@@ -350,66 +371,71 @@ export class Editor extends Component {
     this.setGutterMarkers()
 
     return (
-      <Bar expanded={this.state.expanded} minHeight={this.state.editorHeight}>
-        <EditorWrapper
-          expanded={this.state.expanded}
-          minHeight={this.state.editorHeight}
-        >
-          <Codemirror
-            ref={ref => {
-              this.editor = ref
-            }}
-            onChanges={this.updateCode}
-            options={options}
-            schema={this.props.schema}
-            initialPosition={this.state.lastPosition}
-          />
-        </EditorWrapper>
-        <ActionButtonSection>
-          <Render if={this.state.contentId}>
-            <EditModeEditorButton
-              onClick={() =>
-                this.props.onFavoriteUpdateClick(
-                  this.state.contentId,
-                  this.getEditorValue()
-                )}
-              disabled={this.getEditorValue().length < 1}
-              color='#ffaf00'
-              title='Favorite'
-              hoverIcon='&quot;\74&quot;'
-              icon='&quot;\25&quot;'
-            />
-          </Render>
-          <Render if={!this.state.contentId}>
-            <EditorButton
-              data-test-id='editorFavorite'
-              onClick={() => {
-                this.props.onFavoriteClick(this.getEditorValue())
+      <div>
+        <Bar expanded={this.state.expanded} minHeight={this.state.editorHeight}>
+          <EditorWrapper
+            expanded={this.state.expanded}
+            minHeight={this.state.editorHeight}
+          >
+            <Codemirror
+              ref={ref => {
+                this.editor = ref
               }}
-              disabled={this.getEditorValue().length < 1}
-              title='Update favorite'
-              hoverIcon='&quot;\58&quot;'
-              icon='&quot;\73&quot;'
+              onChanges={this.updateCode}
+              options={options}
+              schema={this.props.schema}
+              initialPosition={this.state.lastPosition}
             />
-          </Render>
-          <EditorButton
-            data-test-id='clearEditorContent'
-            onClick={() => this.clearEditor()}
-            disabled={this.getEditorValue().length < 1}
-            title='Clear'
-            hoverIcon='&quot;\e005&quot;'
-            icon='&quot;\5e&quot;'
-          />
-          <EditorButton
-            data-test-id='submitQuery'
-            onClick={() => this.execCurrent()}
-            disabled={this.getEditorValue().length < 1}
-            title='Play'
-            hoverIcon='&quot;\e002&quot;'
-            icon='&quot;\77&quot;'
-          />
-        </ActionButtonSection>
-      </Bar>
+          </EditorWrapper>
+          <ActionButtonSection>
+            <Render if={this.state.contentId}>
+              <EditModeEditorButton
+                onClick={() =>
+                  this.props.onFavoriteUpdateClick(
+                    this.state.contentId,
+                    this.getEditorValue()
+                  )}
+                disabled={this.getEditorValue().length < 1}
+                color='#ffaf00'
+                title='Favorite'
+                hoverIcon='&quot;\74&quot;'
+                icon='&quot;\25&quot;'
+              />
+            </Render>
+            <Render if={!this.state.contentId}>
+              <EditorButton
+                data-test-id='editorFavorite'
+                onClick={() => {
+                  this.props.onFavoriteClick(this.getEditorValue())
+                }}
+                disabled={this.getEditorValue().length < 1}
+                title='Update favorite'
+                hoverIcon='&quot;\58&quot;'
+                icon='&quot;\73&quot;'
+              />
+            </Render>
+            <EditorButton
+              data-test-id='clearEditorContent'
+              onClick={() => this.clearEditor()}
+              disabled={this.getEditorValue().length < 1}
+              title='Clear'
+              hoverIcon='&quot;\e005&quot;'
+              icon='&quot;\5e&quot;'
+            />
+            <EditorButton
+              data-test-id='submitQuery'
+              onClick={() => this.execCurrent()}
+              disabled={this.getEditorValue().length < 1}
+              title='Play'
+              hoverIcon='&quot;\e002&quot;'
+              icon='&quot;\77&quot;'
+            />
+          </ActionButtonSection>
+        </Bar>
+        <ParametersViewer
+          parametersFromEditor={this.state.parametersFromEditor}
+        />
+      </div>
     )
   }
 }

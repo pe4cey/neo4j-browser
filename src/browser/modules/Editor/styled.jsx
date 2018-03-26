@@ -49,6 +49,13 @@ export const Bar = styled(BaseBar)`
     }
   }};
 `
+
+export const ParametersViewerContainer = styled.div`
+  margin: 0 24px;
+  background-color: ${props => props.theme.editorBackground};
+`
+
+export const ParametersViewerEntry = styled.div`padding: 10px 29px;`
 export const ActionButtonSection = styled.div`
   flex: 0 0 130px;
   align-items: top;
