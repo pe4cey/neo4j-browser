@@ -20,6 +20,7 @@
 
 import { Component } from 'preact'
 import { connect } from 'preact-redux'
+import jsonic from 'jsonic'
 import { getParams } from 'shared/modules/params/paramsDuck'
 
 import { TextInput } from 'browser-components/Form'
@@ -52,7 +53,14 @@ const ParametersViewer = props => {
     <ParametersViewerContainer>
       {props.parameters.map(param => {
         const addParam = value => {
-          return props.addParam({ [param.paramName]: value })
+          try {
+            const obj = `${param.paramName}: ${value}`
+            const json = '{' + obj + '}'
+            const res = jsonic(json)
+            return props.addParam(res)
+          } catch (e) {
+            return props.addParam({ [param.paramName]: value })
+          }
         }
         return (
           <ParametersViewerEntry>
