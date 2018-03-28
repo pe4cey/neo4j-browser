@@ -19,18 +19,18 @@
  */
 
 import { connect } from 'preact-redux'
-import jsonic from 'jsonic'
-import { getParams } from 'shared/modules/params/paramsDuck'
+import { getParams, update } from 'shared/modules/params/paramsDuck'
+import { parseParam } from 'shared/modules/commands/helpers/params'
 
 import {
   ParametersViewerContainer,
   ParametersViewerEntry,
-  ParametersViewerKey,
-  ParametersViewerTextInput
+  ParametersViewerKey
 } from './styled'
+import { TextInput } from 'browser-components/Form'
 
 const ParametersViewerValue = props => (
-  <ParametersViewerTextInput
+  <TextInput
     value={props.value}
     onChange={v => props.addParam(v.target.value)}
   />
@@ -41,14 +41,11 @@ const ParametersViewer = props => {
     <ParametersViewerContainer>
       {props.parameters.map(param => {
         const addParam = value => {
-          try {
-            const obj = `${param.paramName}: ${value}`
-            const json = '{' + obj + '}'
-            const res = jsonic(json)
-            return props.addParam(res)
-          } catch (e) {
-            return props.addParam({ [param.paramName]: value })
-          }
+          props.parseParam(
+            `${param.paramName}: ${value}`,
+            res => props.update(res),
+            e => props.update({ [param.paramName]: value })
+          )
         }
         return (
           <ParametersViewerEntry>
@@ -76,12 +73,17 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
       }
     )
     return {
+      ...ownProps,
+      ...stateProps,
+      ...dispatchProps,
       parameters: mappedParams,
-      ...ownProps
+      parseParam
     }
   } else {
     return {
-      ...stateProps
+      ...ownProps,
+      ...stateProps,
+      ...dispatchProps
     }
   }
 }
@@ -90,4 +92,10 @@ const mapStateToProps = store => ({
   params: getParams(store)
 })
 
-export default connect(mapStateToProps, null, mergeProps)(ParametersViewer)
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  update: param => dispatch(update(param))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  ParametersViewer
+)

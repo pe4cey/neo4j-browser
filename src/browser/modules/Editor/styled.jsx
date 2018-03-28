@@ -20,7 +20,7 @@
 
 import styled from 'styled-components'
 import { dim } from 'browser-styles/constants'
-import { TextKey } from 'browser-components/Form'
+import { TextKey, TextInput } from 'browser-components/Form'
 
 const editorPadding = 12
 

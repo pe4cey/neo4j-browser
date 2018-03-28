@@ -21,6 +21,15 @@ import jsonic from 'jsonic'
 import { splitStringOnFirst } from 'services/commandUtils'
 import { update, replace } from 'shared/modules/params/paramsDuck'
 
+export const parseParam = (param, success, fail) => {
+  try {
+    const json = '{' + param + '}'
+    const res = jsonic(json)
+    return success(res)
+  } catch (e) {
+    return fail(e)
+  }
+}
 export const handleParamsCommand = (action, cmdchar, put, store) => {
   const strippedCmd = action.cmd.substr(cmdchar.length)
   const parts = splitStringOnFirst(strippedCmd, ' ')
@@ -41,16 +50,20 @@ export const handleParamsCommand = (action, cmdchar, put, store) => {
       }
     } else {
       // Single param
-      try {
-        const json = '{' + param + '}'
-        const res = jsonic(json)
-        put(update(res))
-        return resolve({ result: res, type: 'param' })
-      } catch (e) {
-        return reject(
-          new Error('Could not parse input. Usage: `:param "x": 2`. ' + e)
-        )
-      }
+      return parseParam(
+        param,
+        res => {
+          put(update(res))
+          return resolve({ result: res, type: 'param' })
+        },
+        e =>
+          reject(
+            new Error(
+              'Could not parse input. Usage: `:params {"x":1,"y":"string"}`. ' +
+                e
+            )
+          )
+      )
     }
   })
   return p
