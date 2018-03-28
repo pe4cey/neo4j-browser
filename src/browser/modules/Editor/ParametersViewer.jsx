@@ -18,35 +18,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from 'preact'
 import { connect } from 'preact-redux'
 import jsonic from 'jsonic'
 import { getParams } from 'shared/modules/params/paramsDuck'
 
-import { TextInput } from 'browser-components/Form'
 import {
   ParametersViewerContainer,
   ParametersViewerEntry,
-  ParametersViewerKey
+  ParametersViewerKey,
+  ParametersViewerTextInput
 } from './styled'
 
-class ParametersViewerValue extends Component {
-  render () {
-    if (this.props.value) {
-      return (
-        <TextInput
-          value={this.props.value}
-          onChange={v => this.props.addParam(v.target.value)}
-        />
-      )
-    }
-    return this.state.edit ? (
-      <TextInput onChange={v => this.props.addParam(v.target.value)} />
-    ) : (
-      <span onClick={() => this.setState({ edit: true })}>+</span>
-    )
-  }
-}
+const ParametersViewerValue = props => (
+  <ParametersViewerTextInput
+    value={props.value}
+    onChange={v => props.addParam(v.target.value)}
+  />
+)
 
 const ParametersViewer = props => {
   return props.parameters ? (

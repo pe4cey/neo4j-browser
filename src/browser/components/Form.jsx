@@ -46,7 +46,7 @@ const StyledTextKey = styled.label`
   color: #555;
   font-size: 14px;
   padding: 6px 12px;
-  width: 150px;
+  min-width: 50px;
 `
 
 export const TextInput = props => {
