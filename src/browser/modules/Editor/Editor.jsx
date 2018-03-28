@@ -107,13 +107,15 @@ export class Editor extends Component {
   execCurrent () {
     const value = this.getEditorValue()
     if (!value) return
-    this.props.onExecute(value)
+    this.props.onExecute(value, this.state.tempParams)
     this.clearEditor()
     this.setState({
       notifications: [],
       historyIndex: -1,
       buffer: null,
-      expanded: false
+      expanded: false,
+      tempParams: {},
+      parametersFromEditor: []
     })
   }
 
@@ -168,7 +170,6 @@ export class Editor extends Component {
   }
 
   triggerAutocompletion (cm, changed) {
-    console.log('change')
     if (changed.text.length !== 1 || !this.props.enableEditorAutocomplete) {
       return
     }
@@ -434,6 +435,13 @@ export class Editor extends Component {
         </Bar>
         <ParametersViewer
           parametersFromEditor={this.state.parametersFromEditor}
+          addParam={tempParams => {
+            if (this.state.tempParams) {
+              const a = { ...this.state.tempParams, ...tempParams }
+              return this.setState({ tempParams: a })
+            }
+            return this.setState({ tempParams: { ...tempParams } })
+          }}
         />
       </div>
     )
@@ -455,8 +463,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
       const action = favorites.updateFavorite(id, cmd)
       ownProps.bus.send(action.type, action)
     },
-    onExecute: cmd => {
-      const action = executeCommand(cmd)
+    onExecute: (cmd, params) => {
+      const action = executeCommand(cmd, undefined, undefined, params)
       ownProps.bus.send(action.type, action)
     }
   }

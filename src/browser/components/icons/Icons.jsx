@@ -271,11 +271,12 @@ export const QuestionIcon = () => (
     className='fa fa-question-circle-o'
   />
 )
-export const PlusIcon = () => (
+export const PlusIcon = props => (
   <IconContainer
     activeStyle={styles.white}
     inactiveStyle={styles.white}
     className='fa fa-plus'
+    {...props}
   />
 )
 export const EditIcon = () => (

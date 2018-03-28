@@ -133,10 +133,11 @@ const availableCommands = [
     match: cmd => /^cypher$/.test(cmd),
     exec: (action, cmdchar, put, store) => {
       const state = store.getState()
+      const params = { ...getParams(state), ...action.params }
       const [id, request] = handleCypherCommand(
         action,
         put,
-        getParams(state),
+        params,
         shouldUseCypherThread(state)
       )
       put(cypher(action.cmd))

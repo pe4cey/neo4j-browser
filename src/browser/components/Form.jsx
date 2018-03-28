@@ -41,10 +41,20 @@ const StyledLabel = styled.label`
   }
 `
 const StyledRadioEntry = styled.div`margin: 10px 0;`
+const StyledTextKey = styled.label`
+  height: 34px;
+  color: #555;
+  font-size: 14px;
+  padding: 6px 12px;
+  width: 150px;
+`
 
 export const TextInput = props => {
   const { children, ...rest } = props
   return <StyledSettingTextInput {...rest}>{children}</StyledSettingTextInput>
+}
+export const TextKey = props => {
+  return <StyledTextKey {...props} />
 }
 
 export const CheckboxSelector = props => {

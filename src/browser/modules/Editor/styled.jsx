@@ -20,6 +20,7 @@
 
 import styled from 'styled-components'
 import { dim } from 'browser-styles/constants'
+import { TextKey } from 'browser-components/Form'
 
 const editorPadding = 12
 
@@ -56,6 +57,12 @@ export const ParametersViewerContainer = styled.div`
 `
 
 export const ParametersViewerEntry = styled.div`padding: 10px 29px;`
+
+export const ParametersViewerKey = styled(TextKey)`
+  display: inline-block;
+  font-weight: bold;
+`
+
 export const ActionButtonSection = styled.div`
   flex: 0 0 130px;
   align-items: top;

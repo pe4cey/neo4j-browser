@@ -22,25 +22,53 @@ import { Component } from 'preact'
 import { connect } from 'preact-redux'
 import { getParams } from 'shared/modules/params/paramsDuck'
 
-import { ParametersViewerContainer, ParametersViewerEntry } from './styled'
+import { TextInput } from 'browser-components/Form'
+import {
+  ParametersViewerContainer,
+  ParametersViewerEntry,
+  ParametersViewerKey
+} from './styled'
 
-class ParametersViewer extends Component {
+class ParametersViewerValue extends Component {
   render () {
-    return this.props.parameters ? (
-      <ParametersViewerContainer>
-        {this.props.parameters.map(param => (
-          <ParametersViewerEntry>
-            {param.paramName}:{' '}
-            <input>{param.value ? param.value : '`Not set`'}</input>
-          </ParametersViewerEntry>
-        ))}
-      </ParametersViewerContainer>
-    ) : null
+    if (this.props.value) {
+      return (
+        <TextInput
+          value={this.props.value}
+          onChange={v => this.props.addParam(v.target.value)}
+        />
+      )
+    }
+    return this.state.edit ? (
+      <TextInput onChange={v => this.props.addParam(v.target.value)} />
+    ) : (
+      <span onClick={() => this.setState({ edit: true })}>+</span>
+    )
   }
 }
+
+const ParametersViewer = props => {
+  return props.parameters ? (
+    <ParametersViewerContainer>
+      {props.parameters.map(param => {
+        const addParam = value => {
+          return props.addParam({ [param.paramName]: value })
+        }
+        return (
+          <ParametersViewerEntry>
+            <ParametersViewerKey>{param.paramName}: </ParametersViewerKey>
+            <ParametersViewerValue addParam={addParam} value={param.value} />
+          </ParametersViewerEntry>
+        )
+      })}
+    </ParametersViewerContainer>
+  ) : null
+}
+
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
   if (
     ownProps.parametersFromEditor &&
+    ownProps.parametersFromEditor.index &&
     ownProps.parametersFromEditor.index.names
   ) {
     const mappedParams = ownProps.parametersFromEditor.index.names.map(
@@ -52,7 +80,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
       }
     )
     return {
-      parameters: mappedParams
+      parameters: mappedParams,
+      ...ownProps
     }
   } else {
     return {

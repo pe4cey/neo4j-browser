@@ -81,12 +81,13 @@ export default function reducer (state = initialState, action) {
 }
 
 // Action creators
-export const executeCommand = (cmd, contextId, requestId = null) => {
+export const executeCommand = (cmd, contextId, requestId = null, params) => {
   return {
     type: USER_COMMAND_QUEUED,
     cmd,
     id: contextId,
-    requestId
+    requestId,
+    params
   }
 }
 
