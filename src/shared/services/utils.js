@@ -379,3 +379,6 @@ const getUnescapedObjectProp = prop =>
 
 // Epic helpers
 export const put = dispatch => action => dispatch(action)
+
+export const isObject = item =>
+  typeof item === 'object' && !Array.isArray(item) && item !== null

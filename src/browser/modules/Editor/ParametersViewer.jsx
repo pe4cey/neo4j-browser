@@ -21,16 +21,17 @@
 import { connect } from 'preact-redux'
 import { getParams, update } from 'shared/modules/params/paramsDuck'
 import { parseParam } from 'shared/modules/commands/helpers/params'
-
+import { shouldEditorPersistParamsToGlobalScope } from 'shared/modules/settings/settingsDuck'
 import {
   ParametersViewerContainer,
   ParametersViewerEntry,
-  ParametersViewerKey
+  ParametersViewerKey,
+  ParametersViewerInput
 } from './styled'
-import { TextInput } from 'browser-components/Form'
+import { isObject } from 'services/utils'
 
 const ParametersViewerValue = props => (
-  <TextInput
+  <ParametersViewerInput
     value={props.value}
     onChange={v => props.addParam(v.target.value)}
   />
@@ -43,14 +44,24 @@ const ParametersViewer = props => {
         const addParam = value => {
           props.parseParam(
             `${param.paramName}: ${value}`,
-            res => props.update(res),
-            e => props.update({ [param.paramName]: value })
+            res =>
+              props.editorPersistParamsToGlobalScope
+                ? props.update(res)
+                : props.addParam(res),
+            e =>
+              props.editorPersistParamsToGlobalScope
+                ? props.update({ [param.paramName]: value })
+                : props.addParam(e)
           )
         }
+        const value =
+          param.value && isObject(param.value)
+            ? JSON.stringify(param.value)
+            : param.value
         return (
           <ParametersViewerEntry>
-            <ParametersViewerKey>{param.paramName}: </ParametersViewerKey>
-            <ParametersViewerValue addParam={addParam} value={param.value} />
+            <ParametersViewerKey>{param.paramName}</ParametersViewerKey>
+            <ParametersViewerValue addParam={addParam} value={value} />
           </ParametersViewerEntry>
         )
       })}
@@ -89,7 +100,10 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 }
 
 const mapStateToProps = store => ({
-  params: getParams(store)
+  params: getParams(store),
+  editorPersistParamsToGlobalScope: shouldEditorPersistParamsToGlobalScope(
+    store
+  )
 })
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

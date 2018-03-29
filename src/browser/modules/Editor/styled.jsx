@@ -57,10 +57,13 @@ export const ParametersViewerContainer = styled.div`
 `
 
 export const ParametersViewerEntry = styled.div`padding: 10px 29px;`
+export const ParametersViewerInput = styled(TextInput)`width: 280px;`
 
 export const ParametersViewerKey = styled(TextKey)`
   display: inline-block;
   font-weight: bold;
+  word-wrap: break-word;
+  width: 180px;
 `
 
 export const ActionButtonSection = styled.div`
