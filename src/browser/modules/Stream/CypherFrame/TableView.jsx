@@ -34,7 +34,7 @@ import {
   StyledJsonPre
 } from 'browser-components/DataTables'
 import { deepEquals, shallowEquals, stringifyMod } from 'services/utils'
-import { v1 as neo4j } from 'neo4j-driver-alias'
+import driver from 'services/driver'
 import {
   getBodyAndStatusBarMessages,
   getRecordsToDisplayInTable,
@@ -42,7 +42,7 @@ import {
 } from './helpers'
 
 const intToString = val => {
-  if (neo4j.isInt(val)) return val.toString()
+  if (driver.isInt(val)) return val.toString()
 }
 
 const renderCell = entry => {
@@ -61,7 +61,7 @@ const renderCell = entry => {
   }
 }
 export const renderObject = entry => {
-  if (neo4j.isInt(entry)) return entry.toString()
+  if (driver.isInt(entry)) return entry.toString()
   if (entry === null) return <em>null</em>
   return <StyledJsonPre>{stringifyMod(entry, intToString, true)}</StyledJsonPre>
 }

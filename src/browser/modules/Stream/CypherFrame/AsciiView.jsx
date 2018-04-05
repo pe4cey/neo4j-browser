@@ -20,7 +20,7 @@
 
 import { Component } from 'preact'
 import asciitable from 'ascii-data-table'
-import { v1 as neo4j } from 'neo4j-driver-alias'
+import driver from 'services/driver'
 import Render from 'browser-components/Render'
 import Ellipsis from 'browser-components/Ellipsis'
 import { debounce, shallowEquals, deepEquals } from 'services/utils'
@@ -80,7 +80,7 @@ export class AsciiView extends Component {
     const records = getRecordsToDisplayInTable(props.result, props.maxRows)
     const serializedRows =
       stringifyResultArray(
-        neo4j.isInt,
+        driver.isInt,
         transformResultRecordsToResultArray(records)
       ) || []
     this.setState({ serializedRows })

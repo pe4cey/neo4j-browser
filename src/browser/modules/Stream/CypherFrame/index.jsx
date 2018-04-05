@@ -23,7 +23,7 @@ import { Component } from 'preact'
 import FrameTemplate from '../FrameTemplate'
 import { CypherFrameButton } from 'browser-components/buttons'
 import Centered from 'browser-components/Centered'
-import { v1 as neo4j } from 'neo4j-driver-alias'
+import driver from 'services/driver'
 import { deepEquals } from 'services/utils'
 import { getRequest } from 'shared/modules/requests/requestsDuck'
 import FrameSidebar from '../FrameSidebar'
@@ -81,7 +81,7 @@ export class CypherFrame extends Component {
   }
   makeExportData (records) {
     return stringifyResultArray(
-      neo4j.isInt,
+      driver.isInt,
       transformResultRecordsToResultArray(records)
     )
   }
