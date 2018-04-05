@@ -19,7 +19,7 @@
  */
 
 /* global describe, test, expect */
-import { v1 as neo4j } from 'neo4j-driver-alias'
+import driver from 'services/driver'
 import * as viewTypes from 'shared/modules/stream/frameViewTypes'
 import {
   resultHasNodes,
@@ -172,14 +172,14 @@ describe('helpers', () => {
       }
 
       // When
-      const hasNodes = resultHasNodes(request, neo4j.types)
+      const hasNodes = resultHasNodes(request, driver.types)
 
       // Then
       expect(hasNodes).toEqual(false)
     })
     test('should return true if nodes are found, even nested', () => {
       // Given
-      let node = new neo4j.types.Node('2', ['Movie'], { prop2: 'prop2' })
+      let node = new driver.types.Node('2', ['Movie'], { prop2: 'prop2' })
       const mappedGet = map => key => map[key]
       const request = {
         result: {
@@ -200,7 +200,7 @@ describe('helpers', () => {
       }
 
       // When
-      const hasNodes = resultHasNodes(request, neo4j.types)
+      const hasNodes = resultHasNodes(request, driver.types)
 
       // Then
       expect(hasNodes).toEqual(true)
@@ -280,7 +280,7 @@ describe('helpers', () => {
     })
     test('should return the viz view if nodes are existent', () => {
       // Given
-      let node = new neo4j.types.Node('2', ['Movie'], { prop2: 'prop2' })
+      let node = new driver.types.Node('2', ['Movie'], { prop2: 'prop2' })
       const mappedGet = map => key => map[key]
       const request = {
         result: {
@@ -366,7 +366,7 @@ describe('helpers', () => {
     })
     test('should return the ascii if thats the last view', () => {
       // Given
-      let node = new neo4j.types.Node('2', ['Movie'], { prop2: 'prop2' })
+      let node = new driver.types.Node('2', ['Movie'], { prop2: 'prop2' })
       const mappedGet = map => key => map[key]
       const request = {
         result: {
@@ -448,7 +448,7 @@ describe('helpers', () => {
     })
     test('should return viz if the last view was plan but no plan exists and viz elements exists', () => {
       // Given
-      let node = new neo4j.types.Node('2', ['Movie'], { prop2: 'prop2' })
+      let node = new driver.types.Node('2', ['Movie'], { prop2: 'prop2' })
       const mappedGet = map => key => map[key]
       const request = {
         result: {
@@ -516,11 +516,11 @@ describe('helpers', () => {
     })
     test('extractRecordsToResultArray handles regular records', () => {
       // Given
-      const start = new neo4j.types.Node(1, ['X'], { x: 1 })
-      const end = new neo4j.types.Node(2, ['Y'], { y: new neo4j.Int(1) })
-      const rel = new neo4j.types.Relationship(3, 1, 2, 'REL', { rel: 1 })
-      const segments = [new neo4j.types.PathSegment(start, rel, end)]
-      const path = new neo4j.types.Path(start, end, segments)
+      const start = new driver.types.Node(1, ['X'], { x: 1 })
+      const end = new driver.types.Node(2, ['Y'], { y: new driver.Int(1) })
+      const rel = new driver.types.Relationship(3, 1, 2, 'REL', { rel: 1 })
+      const segments = [new driver.types.PathSegment(start, rel, end)]
+      const path = new driver.types.Path(start, end, segments)
 
       const records = [
         {
@@ -528,7 +528,7 @@ describe('helpers', () => {
           _fields: [
             'x',
             'y',
-            new neo4j.types.Node('1', ['Person'], { prop1: 'prop1' })
+            new driver.types.Node('1', ['Person'], { prop1: 'prop1' })
           ]
         },
         {
@@ -543,17 +543,17 @@ describe('helpers', () => {
       // Then
       expect(res).toEqual([
         ['"x"', '"y"', '"n"'],
-        ['x', 'y', new neo4j.types.Node('1', ['Person'], { prop1: 'prop1' })],
+        ['x', 'y', new driver.types.Node('1', ['Person'], { prop1: 'prop1' })],
         ['xx', 'yy', path]
       ])
     })
     test('flattenGraphItemsInResultArray extracts props from graph items', () => {
       // Given
-      const start = new neo4j.types.Node(1, ['X'], { x: 1 })
-      const end = new neo4j.types.Node(2, ['Y'], { y: 1 })
-      const rel = new neo4j.types.Relationship(3, 1, 2, 'REL', { rel: 1 })
-      const segments = [new neo4j.types.PathSegment(start, rel, end)]
-      const path = new neo4j.types.Path(start, end, segments)
+      const start = new driver.types.Node(1, ['X'], { x: 1 })
+      const end = new driver.types.Node(2, ['Y'], { y: 1 })
+      const rel = new driver.types.Relationship(3, 1, 2, 'REL', { rel: 1 })
+      const segments = [new driver.types.PathSegment(start, rel, end)]
+      const path = new driver.types.Path(start, end, segments)
 
       const records = [
         {
@@ -561,7 +561,7 @@ describe('helpers', () => {
           _fields: [
             'x',
             'y',
-            new neo4j.types.Node('1', ['Person'], { prop1: 'prop1' })
+            new driver.types.Node('1', ['Person'], { prop1: 'prop1' })
           ]
         },
         {
@@ -573,8 +573,8 @@ describe('helpers', () => {
       // When
       const step1 = extractRecordsToResultArray(records)
       const res = flattenGraphItemsInResultArray(
-        neo4j.types,
-        neo4j.isInt,
+        driver.types,
+        driver.isInt,
         step1
       )
 
@@ -590,22 +590,22 @@ describe('helpers', () => {
       const records = [
         {
           keys: ['"neoInt"', '"int"', '"any"', '"backslash"'],
-          _fields: [new neo4j.Int('882573709873217509'), 100, 0.5, '"\\"']
+          _fields: [new driver.Int('882573709873217509'), 100, 0.5, '"\\"']
         },
         {
           keys: ['"neoInt"', '"int"', '"any"'],
-          _fields: [new neo4j.Int(300), 100, 'string']
+          _fields: [new driver.Int(300), 100, 'string']
         }
       ]
 
       // When
       const step1 = extractRecordsToResultArray(records)
       const step2 = flattenGraphItemsInResultArray(
-        neo4j.types,
-        neo4j.isInt,
+        driver.types,
+        driver.isInt,
         step1
       )
-      const res = stringifyResultArray(neo4j.isInt, step2)
+      const res = stringifyResultArray(driver.isInt, step2)
       // Then
       expect(res).toEqual([
         ['""neoInt""', '""int""', '""any""', '""backslash""'],
@@ -615,11 +615,11 @@ describe('helpers', () => {
     })
     test('stringifyResultArray handles neo4j integers nested within graph items', () => {
       // Given
-      const start = new neo4j.types.Node(1, ['X'], { x: 1 })
-      const end = new neo4j.types.Node(2, ['Y'], { y: new neo4j.Int(2) }) // <-- Neo4j integer
-      const rel = new neo4j.types.Relationship(3, 1, 2, 'REL', { rel: 1 })
-      const segments = [new neo4j.types.PathSegment(start, rel, end)]
-      const path = new neo4j.types.Path(start, end, segments)
+      const start = new driver.types.Node(1, ['X'], { x: 1 })
+      const end = new driver.types.Node(2, ['Y'], { y: new driver.Int(2) }) // <-- Neo4j integer
+      const rel = new driver.types.Relationship(3, 1, 2, 'REL', { rel: 1 })
+      const segments = [new driver.types.PathSegment(start, rel, end)]
+      const path = new driver.types.Path(start, end, segments)
 
       const records = [
         {
@@ -627,7 +627,7 @@ describe('helpers', () => {
           _fields: [
             'x',
             'y',
-            new neo4j.types.Node('1', ['Person'], { prop1: 'prop1' })
+            new driver.types.Node('1', ['Person'], { prop1: 'prop1' })
           ]
         },
         {
@@ -639,11 +639,11 @@ describe('helpers', () => {
       // When
       const step1 = extractRecordsToResultArray(records)
       const step2 = flattenGraphItemsInResultArray(
-        neo4j.types,
-        neo4j.isInt,
+        driver.types,
+        driver.isInt,
         step1
       )
-      const res = stringifyResultArray(neo4j.isInt, step2)
+      const res = stringifyResultArray(driver.isInt, step2)
       // Then
       expect(res).toEqual([
         ['""x""', '""y""', '""n""'],

@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import driver from 'services/driver'
 import updateStatsFields from './updateStatisticsFields'
 import {
   safetlyRemoveObjectProp,
@@ -25,7 +26,6 @@ import {
   escapeReservedProps,
   unEscapeReservedProps
 } from '../utils'
-import { v1 as neo4j } from 'neo4j-driver-alias'
 
 export const reservedTypePropertyName = 'transport-class'
 
@@ -72,11 +72,11 @@ export function objIntToString (obj, converters) {
 
 export function extractFromNeoObjects (obj, converters) {
   if (
-    obj instanceof neo4j.types.Node ||
-    obj instanceof neo4j.types.Relationship
+    obj instanceof driver.types.Node ||
+    obj instanceof driver.types.Relationship
   ) {
     return obj.properties
-  } else if (obj instanceof neo4j.types.Path) {
+  } else if (obj instanceof driver.types.Path) {
     return [].concat.apply([], extractPathForRows(obj, converters))
   }
   return obj
@@ -286,7 +286,7 @@ export const flattenProperties = rows => {
   )
 }
 
-export const applyGraphTypes = (item, types = neo4j.types) => {
+export const applyGraphTypes = (item, types = driver.types) => {
   if (item === null || item === undefined) {
     return item
   } else if (Array.isArray(item)) {
@@ -324,7 +324,7 @@ export const applyGraphTypes = (item, types = neo4j.types) => {
           item.segments.map(x => applyGraphTypes(x, types))
         )
       case 'Integer':
-        return neo4j.int(tmpItem)
+        return driver.int(tmpItem)
       default:
         return item
     }
@@ -340,7 +340,7 @@ export const applyGraphTypes = (item, types = neo4j.types) => {
   }
 }
 
-export const recursivelyTypeGraphItems = (item, types = neo4j.types) => {
+export const recursivelyTypeGraphItems = (item, types = driver.types) => {
   if (item === null || item === undefined) {
     return item
   }
@@ -396,7 +396,7 @@ export const recursivelyTypeGraphItems = (item, types = neo4j.types) => {
     item.properties = props
     return item
   }
-  if (neo4j.isInt(item)) {
+  if (driver.isInt(item)) {
     return safetlyAddObjectProp(item, reservedTypePropertyName, 'Integer')
   }
   if (typeof item === 'object') {

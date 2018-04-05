@@ -19,7 +19,7 @@
  */
 
 import bolt from 'services/bolt/bolt'
-import { v1 as neo4j } from 'neo4j-driver-alias'
+import driver from 'services/driver'
 import * as viewTypes from 'shared/modules/stream/frameViewTypes'
 import {
   recursivelyExtractGraphItems,
@@ -76,7 +76,7 @@ export const getRecordsToDisplayInTable = (result, maxRows) => {
     : result.records
 }
 
-export const resultHasNodes = (request, types = bolt.neo4j.types) => {
+export const resultHasNodes = (request, types = driver.types) => {
   if (!request) return false
   const { result = {} } = request
   if (!result || !result.records) return false
@@ -163,7 +163,7 @@ export const initialView = (props, state = {}) => {
  * It takes a replacer without enforcing quoting rules to it.
  * Used so we can have Neo4j integers as string without quotes.
  */
-export const stringifyResultArray = (intChecker = neo4j.isInt, arr = []) => {
+export const stringifyResultArray = (intChecker = driver.isInt, arr = []) => {
   return arr.map(col => {
     if (!col) return col
     return col.map(fVal => {
@@ -184,7 +184,7 @@ export const transformResultRecordsToResultArray = records => {
     ? [records]
       .map(extractRecordsToResultArray)
       .map(
-        flattenGraphItemsInResultArray.bind(null, neo4j.types, neo4j.isInt)
+        flattenGraphItemsInResultArray.bind(null, driver.types, driver.isInt)
       )[0]
     : undefined
 }
@@ -204,8 +204,8 @@ export const extractRecordsToResultArray = (records = []) => {
 }
 
 export const flattenGraphItemsInResultArray = (
-  types = neo4j.types,
-  intChecker = neo4j.isInt,
+  types = driver.types,
+  intChecker = driver.isInt,
   result = []
 ) => {
   return result.map(flattenGraphItems.bind(null, types, intChecker))
@@ -216,8 +216,8 @@ export const flattenGraphItemsInResultArray = (
  * Leaves everything else (including neo4j integers) as is
  */
 export const flattenGraphItems = (
-  types = neo4j.types,
-  intChecker = neo4j.isInt,
+  types = driver.types,
+  intChecker = driver.isInt,
   item
 ) => {
   if (Array.isArray(item)) {
@@ -242,7 +242,7 @@ export const flattenGraphItems = (
   return item
 }
 
-export const isGraphItem = (types = neo4j.types, item) => {
+export const isGraphItem = (types = driver.types, item) => {
   return (
     item instanceof types.Node ||
     item instanceof types.Relationship ||
@@ -251,7 +251,7 @@ export const isGraphItem = (types = neo4j.types, item) => {
   )
 }
 
-export function extractPropertiesFromGraphItems (types = neo4j.types, obj) {
+export function extractPropertiesFromGraphItems (types = driver.types, obj) {
   if (obj instanceof types.Node || obj instanceof types.Relationship) {
     return obj.properties
   } else if (obj instanceof types.Path) {
@@ -260,7 +260,7 @@ export function extractPropertiesFromGraphItems (types = neo4j.types, obj) {
   return obj
 }
 
-const arrayifyPath = (types = neo4j.types, path) => {
+const arrayifyPath = (types = driver.types, path) => {
   let segments = path.segments
   // Zero length path. No relationship, end === start
   if (!Array.isArray(path.segments) || path.segments.length < 1) {

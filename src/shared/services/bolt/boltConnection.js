@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { v1 as neo4j } from 'neo4j-driver-alias'
 import { v4 } from 'uuid'
+import driverService from 'services/driver'
 import { BoltConnectionError, createErrorObject } from '../exceptions'
 
 export const DIRECT_CONNECTION = 'DIRECT_CONNECTION'
@@ -60,7 +60,7 @@ const validateConnection = (driver, res, rej) => {
 
 export const getDriver = (host, auth, opts, protocol) => {
   const boltHost = protocol + (host || '').split('bolt://').join('')
-  return neo4j.driver(boltHost, auth, opts)
+  return driverService.driver(boltHost, auth, opts)
 }
 
 export const getDriversObj = (props, opts = {}) => {
@@ -68,7 +68,7 @@ export const getDriversObj = (props, opts = {}) => {
   const auth =
     opts.withoutCredentials || !props.username
       ? undefined
-      : neo4j.auth.basic(props.username, props.password)
+      : driverService.auth.basic(props.username, props.password)
   const getDirectDriver = () => {
     if (driversObj.direct) return driversObj.direct
     driversObj.direct = getDriver(props.host, auth, opts, 'bolt://')
@@ -100,7 +100,7 @@ export function directConnect (
     const creds =
       opts.withoutCredentials || !props.username
         ? undefined
-        : neo4j.auth.basic(props.username, props.password)
+        : driverService.auth.basic(props.username, props.password)
     const driver = getDriver(props.host, creds, opts, 'bolt://')
     driver.onError = e => {
       onLostConnection(e)
@@ -216,7 +216,7 @@ export function routedReadTransaction (
   cancelable = false
 ) {
   const session = _drivers
-    ? _drivers.getRoutedDriver().session(neo4j.session.READ)
+    ? _drivers.getRoutedDriver().session(driverService.session.READ)
     : false
   if (!cancelable) return _transaction(input, parameters, session)
   return _trackedTransaction(input, parameters, session, requestId)
@@ -229,7 +229,7 @@ export function routedWriteTransaction (
   cancelable = false
 ) {
   const session = _drivers
-    ? _drivers.getRoutedDriver().session(neo4j.session.WRITE)
+    ? _drivers.getRoutedDriver().session(driverService.session.WRITE)
     : false
   if (!cancelable) return _transaction(input, parameters, session)
   return _trackedTransaction(input, parameters, session, requestId)

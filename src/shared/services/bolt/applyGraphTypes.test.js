@@ -19,7 +19,7 @@
  */
 
 /* global describe, test, expect */
-import { v1 as neo4j } from 'neo4j-driver-alias'
+import driver from 'services/driver'
 import {
   applyGraphTypes,
   recursivelyTypeGraphItems,
@@ -123,32 +123,32 @@ describe('applyGraphTypes', () => {
   })
 
   test('should apply integer type', () => {
-    const rawNumber = nativeTypesToCustom(neo4j.int(5))
+    const rawNumber = nativeTypesToCustom(driver.int(5))
     const typedNumber = applyGraphTypes(rawNumber)
-    expect(typedNumber).toBeInstanceOf(neo4j.Integer)
+    expect(typedNumber).toBeInstanceOf(driver.Integer)
   })
 
   test('should apply node type', () => {
-    const node = new neo4j.types.Node(neo4j.int(5), ['Test'], {})
+    const node = new driver.types.Node(driver.int(5), ['Test'], {})
     const rawNode = nativeTypesToCustom(node)
 
     const typedNode = applyGraphTypes(rawNode)
-    expect(typedNode).toBeInstanceOf(neo4j.types.Node)
-    expect(typedNode.identity).toBeInstanceOf(neo4j.Integer)
+    expect(typedNode).toBeInstanceOf(driver.types.Node)
+    expect(typedNode.identity).toBeInstanceOf(driver.Integer)
   })
 
   test('should not false positive on fake node object type', () => {
     const rawObject = nativeTypesToCustom({
       labels: ['Test'],
       properties: {},
-      identity: neo4j.int(5),
+      identity: driver.int(5),
       identity2: { low: 5, high: 0, [reservedTypePropertyName]: 'Integer' },
       [reservedTypePropertyName]: 'Node'
     })
 
     const obj = applyGraphTypes(rawObject)
     expect(obj).toBeInstanceOf(Object)
-    expect(obj.identity).toBeInstanceOf(neo4j.Integer)
+    expect(obj.identity).toBeInstanceOf(driver.Integer)
     expect(obj.identity2).toBeInstanceOf(Object)
     expect(obj[reservedTypePropertyName]).toEqual('Node')
   })
@@ -161,9 +161,9 @@ describe('applyGraphTypes', () => {
       prop4: 'a string',
       prop5: true,
       prop6: { prop1: 1, prop2: 'test' },
-      prop7: { prop1: neo4j.int(3), prop2: 'test' },
+      prop7: { prop1: driver.int(3), prop2: 'test' },
       prop8: {
-        prop1: neo4j.int(3),
+        prop1: driver.int(3),
         prop2: { str: 'Some string' }
       },
       prop9: {
@@ -175,12 +175,12 @@ describe('applyGraphTypes', () => {
       prop11: { [reservedTypePropertyName]: 'Yolo' }
     }
 
-    const origNode = new neo4j.types.Node(neo4j.int(5), ['Test'], properties)
+    const origNode = new driver.types.Node(driver.int(5), ['Test'], properties)
     const rawNode = nativeTypesToCustom(origNode)
 
     const typedNode = applyGraphTypes(rawNode)
-    expect(typedNode).toBeInstanceOf(neo4j.types.Node)
-    expect(typedNode.identity).toBeInstanceOf(neo4j.Integer)
+    expect(typedNode).toBeInstanceOf(driver.types.Node)
+    expect(typedNode.identity).toBeInstanceOf(driver.Integer)
 
     expect(typedNode.properties.prop1).toBeNull()
     expect(typedNode.properties.prop2).toEqual(33)
@@ -191,7 +191,7 @@ describe('applyGraphTypes', () => {
     expect(typedNode.properties.prop6.prop1).toEqual(1)
     expect(typedNode.properties.prop6.prop2).toEqual('test')
 
-    expect(typedNode.properties.prop7.prop1).toBeInstanceOf(neo4j.Integer)
+    expect(typedNode.properties.prop7.prop1).toBeInstanceOf(driver.Integer)
     expect(typedNode.properties.prop7.prop1.toInt()).toEqual(3)
     expect(typedNode.properties.prop7.prop2).toEqual('test')
 
@@ -214,25 +214,25 @@ describe('applyGraphTypes', () => {
 
   test('should apply node type to array of data', () => {
     const nodes = [
-      new neo4j.types.Node(neo4j.int(5), ['Test'], {}),
-      new neo4j.types.Node(neo4j.int(15), ['Test2'], {})
+      new driver.types.Node(driver.int(5), ['Test'], {}),
+      new driver.types.Node(driver.int(15), ['Test2'], {})
     ]
 
     const rawNodes = nativeTypesToCustom(nodes)
 
-    const typedNodes = applyGraphTypes(rawNodes, neo4j.types)
+    const typedNodes = applyGraphTypes(rawNodes, driver.types)
     expect(typedNodes.length).toEqual(2)
-    expect(typedNodes[0]).toBeInstanceOf(neo4j.types.Node)
-    expect(typedNodes[0].identity).toBeInstanceOf(neo4j.Integer)
-    expect(typedNodes[1]).toBeInstanceOf(neo4j.types.Node)
-    expect(typedNodes[1].identity).toBeInstanceOf(neo4j.Integer)
+    expect(typedNodes[0]).toBeInstanceOf(driver.types.Node)
+    expect(typedNodes[0].identity).toBeInstanceOf(driver.Integer)
+    expect(typedNodes[1]).toBeInstanceOf(driver.types.Node)
+    expect(typedNodes[1].identity).toBeInstanceOf(driver.Integer)
   })
 
   test('should apply relationship type', () => {
-    const rel = new neo4j.types.Relationship(
-      neo4j.int(5),
-      neo4j.int(1),
-      neo4j.int(2),
+    const rel = new driver.types.Relationship(
+      driver.int(5),
+      driver.int(1),
+      driver.int(2),
       'TESTED_WITH',
       {}
     )
@@ -240,24 +240,24 @@ describe('applyGraphTypes', () => {
     const rawRelationship = nativeTypesToCustom(rel)
 
     const typedRelationship = applyGraphTypes(rawRelationship)
-    expect(typedRelationship).toBeInstanceOf(neo4j.types.Relationship)
-    expect(typedRelationship.identity).toBeInstanceOf(neo4j.Integer)
+    expect(typedRelationship).toBeInstanceOf(driver.types.Relationship)
+    expect(typedRelationship.identity).toBeInstanceOf(driver.Integer)
     expect(typedRelationship.type).toEqual('TESTED_WITH')
   })
 
   test('should apply relationship type to array of data', () => {
     const rels = [
-      new neo4j.types.Relationship(
-        neo4j.int(1),
-        neo4j.int(5),
-        neo4j.int(10),
+      new driver.types.Relationship(
+        driver.int(1),
+        driver.int(5),
+        driver.int(10),
         'TestType',
         {}
       ),
-      new neo4j.types.Relationship(
-        neo4j.int(2),
-        neo4j.int(15),
-        neo4j.int(20),
+      new driver.types.Relationship(
+        driver.int(2),
+        driver.int(15),
+        driver.int(20),
         'TestType_2',
         {}
       )
@@ -267,34 +267,34 @@ describe('applyGraphTypes', () => {
 
     const typedRelationships = applyGraphTypes(rawRelationships)
     expect(typedRelationships.length).toEqual(2)
-    expect(typedRelationships[0]).toBeInstanceOf(neo4j.types.Relationship)
-    expect(typedRelationships[0].identity).toBeInstanceOf(neo4j.Integer)
-    expect(typedRelationships[0].start).toBeInstanceOf(neo4j.Integer)
-    expect(typedRelationships[0].end).toBeInstanceOf(neo4j.Integer)
-    expect(typedRelationships[1]).toBeInstanceOf(neo4j.types.Relationship)
-    expect(typedRelationships[1].identity).toBeInstanceOf(neo4j.Integer)
-    expect(typedRelationships[1].start).toBeInstanceOf(neo4j.Integer)
-    expect(typedRelationships[1].end).toBeInstanceOf(neo4j.Integer)
+    expect(typedRelationships[0]).toBeInstanceOf(driver.types.Relationship)
+    expect(typedRelationships[0].identity).toBeInstanceOf(driver.Integer)
+    expect(typedRelationships[0].start).toBeInstanceOf(driver.Integer)
+    expect(typedRelationships[0].end).toBeInstanceOf(driver.Integer)
+    expect(typedRelationships[1]).toBeInstanceOf(driver.types.Relationship)
+    expect(typedRelationships[1].identity).toBeInstanceOf(driver.Integer)
+    expect(typedRelationships[1].start).toBeInstanceOf(driver.Integer)
+    expect(typedRelationships[1].end).toBeInstanceOf(driver.Integer)
   })
 
   test('should apply to custom object properties', () => {
-    const num = neo4j.int(5)
-    const node = new neo4j.types.Node(neo4j.int(5), ['Test'], {})
+    const num = driver.int(5)
+    const node = new driver.types.Node(driver.int(5), ['Test'], {})
     const obj = { num, node }
 
     const rawData = nativeTypesToCustom(obj)
 
     const typedObject = applyGraphTypes(rawData)
-    expect(typedObject.node).toBeInstanceOf(neo4j.types.Node)
-    expect(typedObject.num).toBeInstanceOf(neo4j.Integer)
+    expect(typedObject.node).toBeInstanceOf(driver.types.Node)
+    expect(typedObject.num).toBeInstanceOf(driver.Integer)
   })
 
   test('should apply to array of custom object properties', () => {
-    const rawNumber1 = neo4j.int(5)
-    const rawNode1 = new neo4j.types.Node(neo4j.int(5), ['Test-1'], {})
+    const rawNumber1 = driver.int(5)
+    const rawNode1 = new driver.types.Node(driver.int(5), ['Test-1'], {})
 
-    const rawNumber2 = neo4j.int(10)
-    const rawNode2 = new neo4j.types.Node(neo4j.int(10), ['Test-2'], {})
+    const rawNumber2 = driver.int(10)
+    const rawNode2 = new driver.types.Node(driver.int(10), ['Test-2'], {})
 
     const rawObj = nativeTypesToCustom([
       { num: rawNumber1, node: rawNode1 },
@@ -303,22 +303,22 @@ describe('applyGraphTypes', () => {
 
     const typedObjects = applyGraphTypes(rawObj)
     expect(typedObjects.length).toEqual(2)
-    expect(typedObjects[0].node).toBeInstanceOf(neo4j.types.Node)
-    expect(typedObjects[0].num).toBeInstanceOf(neo4j.Integer)
-    expect(typedObjects[1].node).toBeInstanceOf(neo4j.types.Node)
-    expect(typedObjects[1].num).toBeInstanceOf(neo4j.Integer)
+    expect(typedObjects[0].node).toBeInstanceOf(driver.types.Node)
+    expect(typedObjects[0].num).toBeInstanceOf(driver.Integer)
+    expect(typedObjects[1].node).toBeInstanceOf(driver.types.Node)
+    expect(typedObjects[1].num).toBeInstanceOf(driver.Integer)
   })
 
   test('should apply PathSegment type', () => {
     const segment = nativeTypesToCustom(getAPathSegment(5, 10, 1))
     const typedPathSegment = applyGraphTypes(segment)
     expect(typedPathSegment).toBeTruthy()
-    expect(typedPathSegment).toBeInstanceOf(neo4j.types.PathSegment)
-    expect(typedPathSegment.start).toBeInstanceOf(neo4j.types.Node)
-    expect(typedPathSegment.start.identity).toBeInstanceOf(neo4j.Integer)
-    expect(typedPathSegment.end).toBeInstanceOf(neo4j.types.Node)
+    expect(typedPathSegment).toBeInstanceOf(driver.types.PathSegment)
+    expect(typedPathSegment.start).toBeInstanceOf(driver.types.Node)
+    expect(typedPathSegment.start.identity).toBeInstanceOf(driver.Integer)
+    expect(typedPathSegment.end).toBeInstanceOf(driver.types.Node)
     expect(typedPathSegment.relationship).toBeInstanceOf(
-      neo4j.types.Relationship
+      driver.types.Relationship
     )
   })
 
@@ -329,18 +329,18 @@ describe('applyGraphTypes', () => {
     const typedPathSegments = applyGraphTypes([segment1, segment2])
     expect(typedPathSegments.length).toEqual(2)
 
-    expect(typedPathSegments[0]).toBeInstanceOf(neo4j.types.PathSegment)
-    expect(typedPathSegments[0].start).toBeInstanceOf(neo4j.types.Node)
-    expect(typedPathSegments[0].end).toBeInstanceOf(neo4j.types.Node)
+    expect(typedPathSegments[0]).toBeInstanceOf(driver.types.PathSegment)
+    expect(typedPathSegments[0].start).toBeInstanceOf(driver.types.Node)
+    expect(typedPathSegments[0].end).toBeInstanceOf(driver.types.Node)
     expect(typedPathSegments[0].relationship).toBeInstanceOf(
-      neo4j.types.Relationship
+      driver.types.Relationship
     )
 
-    expect(typedPathSegments[1]).toBeInstanceOf(neo4j.types.PathSegment)
-    expect(typedPathSegments[1].start).toBeInstanceOf(neo4j.types.Node)
-    expect(typedPathSegments[1].end).toBeInstanceOf(neo4j.types.Node)
+    expect(typedPathSegments[1]).toBeInstanceOf(driver.types.PathSegment)
+    expect(typedPathSegments[1].start).toBeInstanceOf(driver.types.Node)
+    expect(typedPathSegments[1].end).toBeInstanceOf(driver.types.Node)
     expect(typedPathSegments[1].relationship).toBeInstanceOf(
-      neo4j.types.Relationship
+      driver.types.Relationship
     )
   })
 
@@ -357,26 +357,26 @@ describe('applyGraphTypes', () => {
     )
     const typedPath = applyGraphTypes(rawPAth)
     expect(typedPath).toBeTruthy()
-    expect(typedPath).toBeInstanceOf(neo4j.types.Path)
-    expect(typedPath.start).toBeInstanceOf(neo4j.types.Node)
-    expect(typedPath.end).toBeInstanceOf(neo4j.types.Node)
+    expect(typedPath).toBeInstanceOf(driver.types.Path)
+    expect(typedPath.start).toBeInstanceOf(driver.types.Node)
+    expect(typedPath.end).toBeInstanceOf(driver.types.Node)
 
     expect(typedPath.segments.length).toEqual(2)
-    expect(typedPath.segments[0]).toBeInstanceOf(neo4j.types.PathSegment)
-    expect(typedPath.segments[1]).toBeInstanceOf(neo4j.types.PathSegment)
+    expect(typedPath.segments[0]).toBeInstanceOf(driver.types.PathSegment)
+    expect(typedPath.segments[1]).toBeInstanceOf(driver.types.PathSegment)
   })
 
   test('should apply to a complex object of graph types', () => {
-    const rawNode = new neo4j.types.Node(neo4j.int(5), ['Test'], {})
-    const rawNum = neo4j.int(100)
+    const rawNode = new driver.types.Node(driver.int(5), ['Test'], {})
+    const rawNum = driver.int(100)
     const rawPath = getAPath([
       { start: 5, end: 10, relationship: 1 },
       { start: 10, end: 15, relationship: 2 }
     ])
-    const rawRelationship = new neo4j.types.Relationship(
-      neo4j.int(1),
-      neo4j.int(5),
-      neo4j.int(10),
+    const rawRelationship = new driver.types.Relationship(
+      driver.int(1),
+      driver.int(5),
+      driver.int(10),
       'TestType',
       {}
     )
@@ -388,16 +388,18 @@ describe('applyGraphTypes', () => {
     })
     const typedObject = applyGraphTypes(complexObj)
     expect(typedObject).toBeTruthy()
-    expect(typedObject.rawNum).toBeInstanceOf(neo4j.Integer)
-    expect(typedObject.rawNode).toBeInstanceOf(neo4j.types.Node)
-    expect(typedObject.rawRelationship).toBeInstanceOf(neo4j.types.Relationship)
-    expect(typedObject.rawPath).toBeInstanceOf(neo4j.types.Path)
+    expect(typedObject.rawNum).toBeInstanceOf(driver.Integer)
+    expect(typedObject.rawNode).toBeInstanceOf(driver.types.Node)
+    expect(typedObject.rawRelationship).toBeInstanceOf(
+      driver.types.Relationship
+    )
+    expect(typedObject.rawPath).toBeInstanceOf(driver.types.Path)
     expect(typedObject.rawPath.segments.length).toEqual(2)
     expect(typedObject.rawPath.segments[0]).toBeInstanceOf(
-      neo4j.types.PathSegment
+      driver.types.PathSegment
     )
     expect(typedObject.rawPath.segments[1]).toBeInstanceOf(
-      neo4j.types.PathSegment
+      driver.types.PathSegment
     )
   })
 })
@@ -412,28 +414,28 @@ const nativeTypesToCustom = x => {
 
 const typeHintArray = x =>
   x
-    .map(x => recursivelyTypeGraphItems(x, neo4j.types))
+    .map(x => recursivelyTypeGraphItems(x, driver.types))
     .map(JSON.stringify)
     .map(JSON.parse)
 
 const getAPathSegment = (startId, relId, endId) => {
-  const start = new neo4j.types.Node(neo4j.int(startId), ['From'], {})
-  const end = new neo4j.types.Node(neo4j.int(endId), ['To'], {})
-  const rel = new neo4j.types.Relationship(
-    neo4j.int(relId),
-    neo4j.int(startId),
-    neo4j.int(endId),
+  const start = new driver.types.Node(driver.int(startId), ['From'], {})
+  const end = new driver.types.Node(driver.int(endId), ['To'], {})
+  const rel = new driver.types.Relationship(
+    driver.int(relId),
+    driver.int(startId),
+    driver.int(endId),
     'TestType',
     {}
   )
-  return new neo4j.types.PathSegment(start, rel, end)
+  return new driver.types.PathSegment(start, rel, end)
 }
 
 const getAPath = segmentList => {
   const segments = segmentList.map(segment =>
     getAPathSegment(segment.start, segment.relationship, segment.end)
   )
-  return new neo4j.types.Path(
+  return new driver.types.Path(
     segments[0].start,
     segments[segments.length - 1].end,
     segments
