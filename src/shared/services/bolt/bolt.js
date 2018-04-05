@@ -270,6 +270,5 @@ export default {
       intChecker: driver.isInt,
       intConverter: val => val.toNumber(),
       objectConverter: mappings.extractFromNeoObjects
-    }),
-  neo4j: driver
+    })
 }

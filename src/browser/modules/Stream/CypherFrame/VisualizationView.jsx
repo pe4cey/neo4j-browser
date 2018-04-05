@@ -23,6 +23,7 @@ import { connect } from 'preact-redux'
 import { deepEquals } from 'services/utils'
 import * as grassActions from 'shared/modules/grass/grassDuck'
 import bolt from 'services/bolt/bolt'
+import driver from 'services/driver'
 import { withBus } from 'preact-suber'
 import { ExplorerComponent } from '../../D3Visualization/components/Explorer'
 import { StyledVisContainer } from './VisualizationView.styled'
@@ -124,8 +125,8 @@ export class Visualization extends Component {
     })
   }
   getInternalRelationships (existingNodeIds, newNodeIds) {
-    newNodeIds = newNodeIds.map(bolt.neo4j.int)
-    existingNodeIds = existingNodeIds.map(bolt.neo4j.int)
+    newNodeIds = newNodeIds.map(driver.int)
+    existingNodeIds = existingNodeIds.map(driver.int)
     existingNodeIds = existingNodeIds.concat(newNodeIds)
     const query =
       'MATCH (a)-[r]->(b) WHERE id(a) IN $existingNodeIds AND id(b) IN $newNodeIds RETURN r;'

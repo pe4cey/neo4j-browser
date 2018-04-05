@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import bolt from 'services/bolt/bolt'
+import driver from 'services/driver'
 import {
   itemIntToString,
   extractFromNeoObjects
@@ -93,7 +93,7 @@ export const flattenAttributes = data => {
       {},
       ...data.attributes.map(({ name, value }) => ({
         [name]: itemIntToString(value, {
-          intChecker: bolt.neo4j.isInt,
+          intChecker: driver.isInt,
           intConverter: val => val.toString(),
           objectConverter: extractFromNeoObjects
         })

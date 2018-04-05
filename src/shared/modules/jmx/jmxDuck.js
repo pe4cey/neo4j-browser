@@ -21,6 +21,7 @@
 import Rx from 'rxjs/Rx'
 import bolt from 'services/bolt/bolt'
 import { toObjects, extractFromNeoObjects } from 'services/bolt/boltMappings'
+import driver from 'services/driver'
 import { APP_START } from 'shared/modules/app/appDuck'
 import {
   CONNECTED_STATE,
@@ -68,7 +69,7 @@ const fetchJmxValues = store => {
     )
     .then(res => {
       const converters = {
-        intChecker: bolt.neo4j.isInt,
+        intChecker: driver.isInt,
         intConverter: val => val.toString(),
         objectConverter: extractFromNeoObjects
       }
