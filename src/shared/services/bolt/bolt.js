@@ -19,7 +19,7 @@
  */
 
 import { v4 } from 'uuid'
-import { v1 as neo4j } from 'neo4j-driver-alias'
+import driver from 'services/driver'
 import * as mappings from './boltMappings'
 import * as boltConnection from './boltConnection'
 import {
@@ -170,7 +170,7 @@ function setupBoltWorker (id, workFn) {
         reject(msg.data.error)
       } else if (msg.data.type === CYPHER_RESPONSE_MESSAGE) {
         let records = msg.data.result.records.map(record => {
-          const typedRecord = new neo4j.types.Record(
+          const typedRecord = new driver.types.Record(
             record.keys,
             record._fields,
             record._fieldLookup
@@ -224,11 +224,11 @@ export default {
   cancelTransaction,
   useRoutingConfig: shouldWe => boltConnection.setUseRoutingConfig(shouldWe),
   recordsToTableArray: (records, convertInts = true) => {
-    const intChecker = convertInts ? neo4j.isInt : () => true
+    const intChecker = convertInts ? driver.isInt : () => true
     const intConverter = convertInts
       ? item =>
         mappings.itemIntToString(item, {
-          intChecker: neo4j.isInt,
+          intChecker: driver.isInt,
           intConverter: val => val.toNumber()
         })
       : val => val
@@ -241,18 +241,18 @@ export default {
   extractNodesAndRelationshipsFromRecords: records => {
     return mappings.extractNodesAndRelationshipsFromRecords(
       records,
-      neo4j.types
+      driver.types
     )
   },
   extractNodesAndRelationshipsFromRecordsForOldVis: (
     records,
     filterRels = true
   ) => {
-    const intChecker = neo4j.isInt
+    const intChecker = driver.isInt
     const intConverter = val => val.toString()
     return mappings.extractNodesAndRelationshipsFromRecordsForOldVis(
       records,
-      neo4j.types,
+      driver.types,
       filterRels,
       {
         intChecker,
@@ -267,9 +267,9 @@ export default {
   retrieveFormattedUpdateStatistics: mappings.retrieveFormattedUpdateStatistics,
   itemIntToNumber: item =>
     mappings.itemIntToString(item, {
-      intChecker: neo4j.isInt,
+      intChecker: driver.isInt,
       intConverter: val => val.toNumber(),
       objectConverter: mappings.extractFromNeoObjects
     }),
-  neo4j: neo4j
+  neo4j: driver
 }
