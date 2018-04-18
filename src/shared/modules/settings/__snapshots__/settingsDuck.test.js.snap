@@ -6,6 +6,7 @@ Object {
   "browserSyncDebugServer": null,
   "cmdchar": ":",
   "editorAutocomplete": true,
+  "editorParamsToGlobal": true,
   "initCmd": ":play start",
   "initialNodeDisplay": 300,
   "maxFrames": 30,

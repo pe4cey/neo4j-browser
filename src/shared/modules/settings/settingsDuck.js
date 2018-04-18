@@ -44,7 +44,7 @@ export const getScrollToTop = state => state[NAME].scrollToTop
 export const shouldReportUdc = state => state[NAME].shouldReportUdc !== false
 export const shouldAutoComplete = state => state[NAME].autoComplete !== false
 export const shouldEditorPersistParamsToGlobalScope = state =>
-  state[NAME].persistEditorParamsToGlobalScope !== false
+  state[NAME].editorParamsToGlobal !== false
 
 const browserSyncConfig = (host = 'https://auth.neo4j.com') => ({
   authWindowUrl: `${host}/indexNewBrowser.html`,
@@ -80,7 +80,7 @@ const initialState = {
   maxFrames: 30,
   editorAutocomplete: true,
   useCypherThread: true,
-  editorParamsToGlobalScope: true
+  editorParamsToGlobal: true
 }
 
 export default function settings (state = initialState, action) {
