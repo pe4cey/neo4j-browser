@@ -59,7 +59,7 @@ const ParametersViewer = props => {
             ? JSON.stringify(param.value)
             : param.value
         return (
-          <ParametersViewerEntry>
+          <ParametersViewerEntry data-test-id={`param-${param.paramName}`}>
             <ParametersViewerKey>{param.paramName}</ParametersViewerKey>
             <ParametersViewerValue addParam={addParam} value={value} />
           </ParametersViewerEntry>
