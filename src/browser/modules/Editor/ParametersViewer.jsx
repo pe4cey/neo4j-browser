@@ -33,7 +33,7 @@ import { isObject } from 'services/utils'
 const ParametersViewerValue = props => (
   <ParametersViewerInput
     value={props.value}
-    onChange={v => props.addParam(v.target.value)}
+    onBlur={v => props.addParam(v.target.value)}
   />
 )
 
