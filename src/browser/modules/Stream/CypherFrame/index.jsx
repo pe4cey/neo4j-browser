@@ -66,7 +66,8 @@ import {
   getMaxRows,
   getInitialNodeDisplay,
   getMaxNeighbours,
-  shouldAutoComplete
+  shouldAutoComplete,
+  shouldEnableParamEditing
 } from 'shared/modules/settings/settingsDuck'
 import { setRecentView, getRecentView } from 'shared/modules/stream/streamDuck'
 
@@ -399,6 +400,7 @@ const mapStateToProps = (state, ownProps) => {
     initialNodeDisplay: getInitialNodeDisplay(state),
     maxNeighbours: getMaxNeighbours(state),
     autoComplete: shouldAutoComplete(state),
+    enableParamEditing: shouldEnableParamEditing(state),
     recentView: getRecentView(state),
     request: getRequest(state, ownProps.frame.requestId)
   }

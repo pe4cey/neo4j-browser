@@ -43,6 +43,8 @@ export const getInitialNodeDisplay = state =>
 export const getScrollToTop = state => state[NAME].scrollToTop
 export const shouldReportUdc = state => state[NAME].shouldReportUdc !== false
 export const shouldAutoComplete = state => state[NAME].autoComplete !== false
+export const shouldEnableParamEditing = state =>
+  state[NAME].enableParamEditing !== false
 export const shouldEditorPersistParamsToGlobalScope = state =>
   state[NAME].editorParamsToGlobal !== false
 
@@ -80,7 +82,8 @@ const initialState = {
   maxFrames: 30,
   editorAutocomplete: true,
   useCypherThread: true,
-  editorParamsToGlobal: true
+  editorParamsToGlobal: true,
+  enableParamEditing: false
 }
 
 export default function settings (state = initialState, action) {

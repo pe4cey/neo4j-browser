@@ -38,6 +38,7 @@ import {
 import { getHistory } from 'shared/modules/history/historyDuck'
 import {
   getCmdChar,
+  shouldEnableParamEditing,
   shouldEditorAutocomplete
 } from 'shared/modules/settings/settingsDuck'
 import { Bar, ActionButtonSection, EditorWrapper } from './styled'
@@ -433,16 +434,18 @@ export class Editor extends Component {
             />
           </ActionButtonSection>
         </Bar>
-        <ParametersViewer
-          parametersFromEditor={this.state.parametersFromEditor}
-          addParam={tempParams => {
-            if (this.state.tempParams) {
-              const a = { ...this.state.tempParams, ...tempParams }
-              return this.setState({ tempParams: a })
-            }
-            return this.setState({ tempParams: { ...tempParams } })
-          }}
-        />
+        <Render if={this.props.enableParamEditing}>
+          <ParametersViewer
+            parametersFromEditor={this.state.parametersFromEditor}
+            addParam={tempParams => {
+              if (this.state.tempParams) {
+                const a = { ...this.state.tempParams, ...tempParams }
+                return this.setState({ tempParams: a })
+              }
+              return this.setState({ tempParams: { ...tempParams } })
+            }}
+          />
+        </Render>
       </div>
     )
   }
@@ -473,6 +476,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 const mapStateToProps = state => {
   return {
     enableEditorAutocomplete: shouldEditorAutocomplete(state),
+    enableParamEditing: shouldEnableParamEditing(state),
     history: getHistory(state),
     cmdchar: getCmdChar(state),
     schema: {
