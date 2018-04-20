@@ -118,7 +118,6 @@ function handleServerAddCommand (action, cmdchar, put, store) {
   } catch (e) {
     return { ...action, type: 'error', error: { message: getErrorMessage(e) } }
   }
-  host = 'bolt://' + host.replace(/bolt:\/\//, '')
   put(connections.addConnection({ name, username, password, host }))
   const state = store.getState()
   return {

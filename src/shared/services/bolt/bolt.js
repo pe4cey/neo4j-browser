@@ -232,6 +232,7 @@ export default {
   routedWriteTransaction,
   cancelTransaction,
   useRoutingConfig: shouldWe => boltConnection.setUseRoutingConfig(shouldWe),
+  useHttpConnection: shouldWe => boltConnection.setUseHttpConnection(shouldWe),
   recordsToTableArray: (records, convertInts = true) => {
     const intChecker = convertInts ? neo4j.isInt : () => true
     const intConverter = convertInts
