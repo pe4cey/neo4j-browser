@@ -31,6 +31,7 @@ import {
   getInitCmd,
   getSettings,
   getUseBoltRouting,
+  getUseHttpConnection,
   getCmdChar,
   UPDATE as SETTINGS_UPDATE
 } from 'shared/modules/settings/settingsDuck'
@@ -540,6 +541,7 @@ export const checkSettingsForRoutingDriver = (action$, store) => {
     .merge(action$.ofType(APP_START))
     .map(action => {
       bolt.useRoutingConfig(getUseBoltRouting(store.getState()))
+      bolt.useHttpConnection(getUseHttpConnection(store.getState()))
       return { type: 'NOOP' }
     })
 }

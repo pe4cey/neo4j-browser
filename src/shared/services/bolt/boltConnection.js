@@ -31,11 +31,13 @@ const runningQueryRegister = {}
 let _drivers = null
 
 let _useRoutingConfig = false
+let _useHttpConnection = false
 let _routingAvailable = false
 let _inheritedUseRouting = false
 
 export const useRouting = () =>
   (_useRoutingConfig && _routingAvailable) || _inheritedUseRouting
+export const useHttpConnection = () => _useHttpConnection
 
 const _routingAvailability = () => {
   return directTransaction('CALL dbms.procedures()').then(res => {
@@ -58,14 +60,8 @@ const validateConnection = (driver, res, rej) => {
     })
 }
 
-export const getDriver = (
-  host,
-  auth,
-  opts,
-  protocol,
-  onConnectFail = () => {}
-) => {
-  const boltHost =
+export const getDriver = (host, auth, opts, protocol, onConnectFail) => {
+  const hostWithoutBoltProtocol =
     protocol +
     (host || '')
       .split('bolt://')
@@ -73,7 +69,7 @@ export const getDriver = (
       .split('http://')
       .join('')
   try {
-    const res = neo4j.driver(boltHost, auth, opts)
+    const res = neo4j.driver(hostWithoutBoltProtocol, auth, opts)
     return res
   } catch (e) {
     onConnectFail(e)
@@ -93,7 +89,7 @@ export const getDriversObj = (props, opts = {}, onConnectFail = () => {}) => {
       props.host,
       auth,
       opts,
-      props.useHttpConnection ? 'http://' : 'bolt://',
+      useHttpConnection ? 'http://' : 'bolt://',
       onConnectFail
     )
     return driversObj.direct
@@ -105,7 +101,7 @@ export const getDriversObj = (props, opts = {}, onConnectFail = () => {}) => {
       props.host,
       auth,
       opts,
-      props.useHttpConnection ? 'http://' : 'bolt+routing://',
+      useHttpConnection ? 'http://' : 'bolt+routing://',
       onConnectFail
     )
     return driversObj.routed
@@ -292,4 +288,8 @@ export const ensureConnection = (props, opts, onLostConnection) => {
 
 export const setUseRoutingConfig = useRoutingConfig => {
   _useRoutingConfig = useRoutingConfig
+}
+
+export const setUseHttpConnection = useHttpConnection => {
+  _useHttpConnection = useHttpConnection
 }
