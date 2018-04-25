@@ -88,6 +88,7 @@ function routedWriteTransaction (input, parameters, requestMetaData = {}) {
       }
     )
     const workerPromise = setupBoltWorker(id, workFn, onLostConnection)
+
     return [id, workerPromise]
   } else {
     return boltConnection.routedWriteTransaction(
@@ -131,6 +132,11 @@ function routedReadTransaction (input, parameters, requestMetaData = {}) {
   }
 }
 
+const getProtocol = (url, routing) => {
+  if (routing) return 'bolt+routing://'
+  return url.match(/^(.*:\/\/)/)[0]
+}
+
 function directTransaction (input, parameters, requestMetaData = {}) {
   const {
     useCypherThread = false,
@@ -148,7 +154,8 @@ function directTransaction (input, parameters, requestMetaData = {}) {
       cancelable,
       {
         ...connectionProperties,
-        inheritedUseRouting: false
+        inheritedUseRouting: false,
+        protocol: getProtocol(connectionProperties.host)
       }
     )
     const workerPromise = setupBoltWorker(id, workFn, onLostConnection)
@@ -236,7 +243,6 @@ export default {
   routedWriteTransaction,
   cancelTransaction,
   useRoutingConfig: shouldWe => boltConnection.setUseRoutingConfig(shouldWe),
-  useHttpConnection: shouldWe => boltConnection.setUseHttpConnection(shouldWe),
   recordsToTableArray: (records, convertInts = true) => {
     const intChecker = convertInts ? neo4j.isInt : () => true
     const intConverter = convertInts

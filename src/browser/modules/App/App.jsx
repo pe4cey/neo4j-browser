@@ -26,8 +26,7 @@ import * as themes from 'browser/styles/themes'
 import {
   getTheme,
   getCmdChar,
-  getBrowserSyncConfig,
-  getUseHttpConnection
+  getBrowserSyncConfig
 } from 'shared/modules/settings/settingsDuck'
 import { FOCUS, EXPAND } from 'shared/modules/editor/editorDuck'
 import { useBrowserSync } from 'shared/modules/features/featuresDuck'
@@ -156,7 +155,6 @@ const mapStateToProps = state => {
     activeConnection: getActiveConnection(state),
     theme: getTheme(state),
     connectionState: getConnectionState(state),
-    useHttpConnection: getUseHttpConnection(state),
     cmdchar: getCmdChar(state),
     showUnknownCommandBanner: wasUnknownCommand(state),
     errorMessage: getErrorMessage(state),

@@ -31,13 +31,11 @@ const runningQueryRegister = {}
 let _drivers = null
 
 let _useRoutingConfig = false
-let _useHttpConnection = false
 let _routingAvailable = false
 let _inheritedUseRouting = false
 
 export const useRouting = () =>
   (_useRoutingConfig && _routingAvailable) || _inheritedUseRouting
-export const useHttpConnection = () => _useHttpConnection
 
 const _routingAvailability = () => {
   return directTransaction('CALL dbms.procedures()').then(res => {
@@ -60,16 +58,23 @@ const validateConnection = (driver, res, rej) => {
     })
 }
 
+const getProtocol = (url, routing) => {
+  if (routing) return 'bolt+routing://'
+  return url.match(/^(.*:\/\/)/)[0]
+}
+
 export const getDriver = (host, auth, opts, protocol, onConnectFail) => {
-  const hostWithoutBoltProtocol =
+  const hostWithProtocol =
     protocol +
     (host || '')
       .split('bolt://')
       .join('')
       .split('http://')
       .join('')
+      .split('https://')
+      .join('')
   try {
-    const res = neo4j.driver(hostWithoutBoltProtocol, auth, opts)
+    const res = neo4j.driver(hostWithProtocol, auth, opts)
     return res
   } catch (e) {
     onConnectFail(e)
@@ -89,7 +94,7 @@ export const getDriversObj = (props, opts = {}, onConnectFail = () => {}) => {
       props.host,
       auth,
       opts,
-      useHttpConnection ? 'http://' : 'bolt://',
+      props.protocol || getProtocol(props.host),
       onConnectFail
     )
     return driversObj.direct
@@ -101,7 +106,7 @@ export const getDriversObj = (props, opts = {}, onConnectFail = () => {}) => {
       props.host,
       auth,
       opts,
-      useHttpConnection ? 'http://' : 'bolt+routing://',
+      getProtocol(props.host, true),
       onConnectFail
     )
     return driversObj.routed
@@ -127,12 +132,7 @@ export function directConnect (
       opts.withoutCredentials || !props.username
         ? neo4j.auth.basic('', '')
         : neo4j.auth.basic(props.username, props.password)
-    const driver = getDriver(
-      props.host,
-      creds,
-      opts,
-      props.useHttpConnection ? 'http://' : 'bolt://'
-    )
+    const driver = getDriver(props.host, creds, opts, getProtocol(props.host))
     driver.onError = e => {
       onLostConnection(e)
       reject(e)

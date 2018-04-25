@@ -30,8 +30,7 @@ import {
 } from 'shared/modules/connections/connectionsDuck'
 import {
   getInitCmd,
-  updateBoltRouting,
-  getUseHttpConnection
+  updateBoltRouting
 } from 'shared/modules/settings/settingsDuck'
 import { executeSystemCommand } from 'shared/modules/commands/commandsDuck'
 import { shouldRetainConnectionCredentials } from 'shared/modules/dbMeta/dbMetaDuck'
@@ -196,7 +195,6 @@ export class ConnectionForm extends Component {
           username={this.state.username}
           password={this.state.password}
           used={this.state.used}
-          useHttpConnection={this.props.useHttpConnection}
         />
       )
     }
@@ -207,7 +205,6 @@ export class ConnectionForm extends Component {
 const mapStateToProps = state => {
   return {
     initCmd: getInitCmd(state),
-    useHttpConnection: getUseHttpConnection(state),
     activeConnection: getActiveConnection(state),
     activeConnectionData: getActiveConnectionData(state),
     storeCredentials: shouldRetainConnectionCredentials(state)
