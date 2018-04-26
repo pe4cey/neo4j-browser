@@ -289,7 +289,3 @@ export const ensureConnection = (props, opts, onLostConnection) => {
 export const setUseRoutingConfig = useRoutingConfig => {
   _useRoutingConfig = useRoutingConfig
 }
-
-export const setUseHttpConnection = useHttpConnection => {
-  _useHttpConnection = useHttpConnection
-}

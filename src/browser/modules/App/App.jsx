@@ -192,9 +192,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
       ...stateProps.defaultConnectionData,
       ...creds,
       encrypted: creds.tlsLevel === 'REQUIRED',
-      host: `${stateProps.useHttpConnection
-        ? 'http'
-        : 'bolt'}://${creds.host}:${creds.port}`,
+      host: `${creds.host}:${creds.port}`,
       restApi
     }
     ownProps.bus.send(SWITCH_CONNECTION, connectionCreds)
@@ -212,9 +210,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
       ...stateProps.defaultConnectionData,
       ...creds,
       encrypted: creds.tlsLevel === 'REQUIRED',
-      host: `${stateProps.useHttpConnection
-        ? 'http'
-        : 'bolt'}://${creds.host}:${creds.port}`,
+      host: `${creds.host}:${creds.port}`,
       restApi
     }
     ownProps.bus.send(INJECTED_DISCOVERY, connectionCreds)

@@ -452,20 +452,25 @@ describe('Object props manipulation', () => {
   const res1 = { x: 1, y: 2, z: { zz: 1 } }
   const res2 = { '\\x': 1, x: 2 }
   const res3 = { x: 4, '\\x': 1, '\\\\x': 2, '\\\\\\x': 3 }
-  test('safetlyAddObjectProp adds prop if no collision', () => {
+  test('safelyAddObjectProp adds prop if no collision', () => {
     const orig = { ...start1 }
-    const res = utils.safetlyAddObjectProp(orig, 'y', 2)
+    const res = utils.safelyAddObjectProp(orig, 'y', 2)
     expect(res).toEqual({ ...res1 })
   })
-  test('safetlyAddObjectProp escapes existing props if collision', () => {
+  test('safelyAddObjectProp escapes existing props if collision', () => {
     const orig = { ...start2 }
-    const res = utils.safetlyAddObjectProp(orig, 'x', 2)
+    const res = utils.safelyAddObjectProp(orig, 'x', 2)
     expect(res).toEqual({ ...res2 })
   })
-  test('safetlyAddObjectProp escapes existing props if collision chain', () => {
+  test('safelyAddObjectProp escapes existing props if collision chain', () => {
     const orig = { ...start3 }
-    const res = utils.safetlyAddObjectProp(orig, 'x', 4)
+    const res = utils.safelyAddObjectProp(orig, 'x', 4)
     expect(res).toEqual({ ...res3 })
+  })
+  test('safelyAddObjectProp returns original value if value is not an object', () => {
+    const value = 1
+    const res = utils.safelyAddObjectProp(value, 'foo', 'bar')
+    expect(res).toEqual(1)
   })
   test('safetlyRemoveObjectProp removes when no escapes', () => {
     const orig = { ...res1 }

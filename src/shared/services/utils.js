@@ -78,6 +78,14 @@ export const isRoutingHost = host => {
   return /^bolt\+routing:\/\//.test(host)
 }
 
+export const toBoltHost = host => {
+  return (
+    'bolt://' +
+    (host || '') // prepend with bolt://
+      .replace(/(.*(?=@+)@|(bolt|bolt\+routing):\/\/)/, '') // remove bolt or bolt+routing protocol and auth info
+  )
+}
+
 export const hostIsAllowed = (uri, whitelist = null) => {
   if (whitelist === '*') return true
   const urlInfo = getUrlInfo(uri)
@@ -333,9 +341,13 @@ export const stringifyMod = (
   return indentation + '"' + value.toString().replace(escRE, escFunc) + '"'
 }
 
-export const safetlyAddObjectProp = (obj, prop, val) => {
+export const safelyAddObjectProp = (obj, prop, val) => {
+  if (typeof obj !== 'object') {
+    return obj
+  }
   obj = escapeReservedProps(obj, prop)
   obj[prop] = val
+
   return obj
 }
 
@@ -352,7 +364,7 @@ export const escapeReservedProps = (obj, prop) => {
   if (!Object.prototype.hasOwnProperty.call(obj, prop)) {
     return obj
   }
-  obj = safetlyAddObjectProp(obj, getEscapedObjectProp(prop), obj[prop])
+  obj = safelyAddObjectProp(obj, getEscapedObjectProp(prop), obj[prop])
   delete obj[prop]
   return obj
 }

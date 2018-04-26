@@ -23,7 +23,7 @@ import { v1 as neo4j } from 'neo4j-driver-alias'
 import { stringFormat } from 'services/bolt/cypherTypesFormatting'
 import {
   safetlyRemoveObjectProp,
-  safetlyAddObjectProp,
+  safelyAddObjectProp,
   escapeReservedProps,
   unEscapeReservedProps
 } from '../utils'
@@ -412,8 +412,8 @@ export const recursivelyTypeGraphItems = (item, types = neo4j.types) => {
     return item.map(i => recursivelyTypeGraphItems(i, types))
   }
   if (item instanceof types.Node) {
-    safetlyAddObjectProp(item, reservedTypePropertyName, 'Node')
-    item.identity = safetlyAddObjectProp(
+    safelyAddObjectProp(item, reservedTypePropertyName, 'Node')
+    item.identity = safelyAddObjectProp(
       item.identity,
       reservedTypePropertyName,
       'Integer'
@@ -423,32 +423,32 @@ export const recursivelyTypeGraphItems = (item, types = neo4j.types) => {
     return item
   }
   if (item instanceof types.PathSegment) {
-    safetlyAddObjectProp(item, reservedTypePropertyName, 'PathSegment')
+    safelyAddObjectProp(item, reservedTypePropertyName, 'PathSegment')
     item.start = recursivelyTypeGraphItems(item.start, types)
     item.end = recursivelyTypeGraphItems(item.end, types)
     item.relationship = recursivelyTypeGraphItems(item.relationship, types)
     return item
   }
   if (item instanceof types.Path) {
-    safetlyAddObjectProp(item, reservedTypePropertyName, 'Path')
+    safelyAddObjectProp(item, reservedTypePropertyName, 'Path')
     item.segments = item.segments.map(x => recursivelyTypeGraphItems(x, types))
     item.start = recursivelyTypeGraphItems(item.start, types)
     item.end = recursivelyTypeGraphItems(item.end, types)
     return item
   }
   if (item instanceof types.Relationship) {
-    safetlyAddObjectProp(item, reservedTypePropertyName, 'Relationship')
-    item.identity = safetlyAddObjectProp(
+    safelyAddObjectProp(item, reservedTypePropertyName, 'Relationship')
+    item.identity = safelyAddObjectProp(
       item.identity,
       reservedTypePropertyName,
       'Integer'
     )
-    item.start = safetlyAddObjectProp(
+    item.start = safelyAddObjectProp(
       item.start,
       reservedTypePropertyName,
       'Integer'
     )
-    item.end = safetlyAddObjectProp(
+    item.end = safelyAddObjectProp(
       item.end,
       reservedTypePropertyName,
       'Integer'
@@ -463,7 +463,7 @@ export const recursivelyTypeGraphItems = (item, types = neo4j.types) => {
     keys.forEach(
       key => (tmp[key] = recursivelyTypeGraphItems(item[key], types))
     )
-    safetlyAddObjectProp(tmp, reservedTypePropertyName, 'Point')
+    safelyAddObjectProp(tmp, reservedTypePropertyName, 'Point')
     return tmp
   }
   if (item instanceof types.Date) {
@@ -472,7 +472,7 @@ export const recursivelyTypeGraphItems = (item, types = neo4j.types) => {
     keys.forEach(
       key => (tmp[key] = recursivelyTypeGraphItems(item[key], types))
     )
-    safetlyAddObjectProp(tmp, reservedTypePropertyName, 'Date')
+    safelyAddObjectProp(tmp, reservedTypePropertyName, 'Date')
     return tmp
   }
   if (item instanceof types.DateTime) {
@@ -481,7 +481,7 @@ export const recursivelyTypeGraphItems = (item, types = neo4j.types) => {
     keys.forEach(
       key => (tmp[key] = recursivelyTypeGraphItems(item[key], types))
     )
-    safetlyAddObjectProp(tmp, reservedTypePropertyName, 'DateTime')
+    safelyAddObjectProp(tmp, reservedTypePropertyName, 'DateTime')
     return tmp
   }
   if (item instanceof types.Duration) {
@@ -490,7 +490,7 @@ export const recursivelyTypeGraphItems = (item, types = neo4j.types) => {
     keys.forEach(
       key => (tmp[key] = recursivelyTypeGraphItems(item[key], types))
     )
-    safetlyAddObjectProp(tmp, reservedTypePropertyName, 'Duration')
+    safelyAddObjectProp(tmp, reservedTypePropertyName, 'Duration')
     return tmp
   }
   if (item instanceof types.LocalDateTime) {
@@ -499,7 +499,7 @@ export const recursivelyTypeGraphItems = (item, types = neo4j.types) => {
     keys.forEach(
       key => (tmp[key] = recursivelyTypeGraphItems(item[key], types))
     )
-    safetlyAddObjectProp(tmp, reservedTypePropertyName, 'LocalDateTime')
+    safelyAddObjectProp(tmp, reservedTypePropertyName, 'LocalDateTime')
     return tmp
   }
   if (item instanceof types.LocalTime) {
@@ -508,7 +508,7 @@ export const recursivelyTypeGraphItems = (item, types = neo4j.types) => {
     keys.forEach(
       key => (tmp[key] = recursivelyTypeGraphItems(item[key], types))
     )
-    safetlyAddObjectProp(tmp, reservedTypePropertyName, 'LocalTime')
+    safelyAddObjectProp(tmp, reservedTypePropertyName, 'LocalTime')
     return tmp
   }
   if (item instanceof types.Time) {
@@ -517,11 +517,11 @@ export const recursivelyTypeGraphItems = (item, types = neo4j.types) => {
     keys.forEach(
       key => (tmp[key] = recursivelyTypeGraphItems(item[key], types))
     )
-    safetlyAddObjectProp(tmp, reservedTypePropertyName, 'Time')
+    safelyAddObjectProp(tmp, reservedTypePropertyName, 'Time')
     return tmp
   }
   if (neo4j.isInt(item)) {
-    return safetlyAddObjectProp(item, reservedTypePropertyName, 'Integer')
+    return safelyAddObjectProp(item, reservedTypePropertyName, 'Integer')
   }
   if (typeof item === 'object') {
     let typedObject = {}

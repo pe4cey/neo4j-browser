@@ -31,7 +31,6 @@ import {
   getInitCmd,
   getSettings,
   getUseBoltRouting,
-  getUseHttpConnection,
   getCmdChar,
   UPDATE as SETTINGS_UPDATE
 } from 'shared/modules/settings/settingsDuck'

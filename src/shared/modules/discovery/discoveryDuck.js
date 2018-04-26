@@ -24,7 +24,7 @@ import { updateConnection } from 'shared/modules/connections/connectionsDuck'
 import { APP_START, USER_CLEAR, inWebEnv } from 'shared/modules/app/appDuck'
 import { updateBoltRouting } from 'shared/modules/settings/settingsDuck'
 import { getDiscoveryEndpoint } from 'services/bolt/boltHelpers'
-import { getUrlParamValue, isRoutingHost } from 'services/utils'
+import { getUrlParamValue, toBoltHost, isRoutingHost } from 'services/utils'
 import { getUrlInfo } from 'shared/services/utils'
 
 export const NAME = 'discover-bolt-host'
@@ -73,7 +73,7 @@ export const getBoltHost = state => {
 
 const updateDiscoveryState = (action, store) => {
   // Remove any protocol and prepend with bolt://
-  const host = action.forceURL
+  const host = toBoltHost(action.forceURL)
   const updateObj = { host }
 
   // Set config to use routing if bolt+routing:// protocol

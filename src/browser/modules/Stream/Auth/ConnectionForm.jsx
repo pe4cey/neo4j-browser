@@ -61,24 +61,18 @@ export class ConnectionForm extends Component {
   }
   connect (doneFn = () => {}) {
     this.props.error({})
-    this.props.bus.self(
-      CONNECT,
-      { ...this.state, useHttpConnection: this.props.useHttpConnection },
-      res => {
-        doneFn()
-        if (res.success) {
-          this.saveAndStart()
+    this.props.bus.self(CONNECT, { ...this.state }, res => {
+      doneFn()
+      if (res.success) {
+        this.saveAndStart()
+      } else {
+        if (res.error.code === 'Neo.ClientError.Security.CredentialsExpired') {
+          this.setState({ passwordChangeNeeded: true })
         } else {
-          if (
-            res.error.code === 'Neo.ClientError.Security.CredentialsExpired'
-          ) {
-            this.setState({ passwordChangeNeeded: true })
-          } else {
-            this.props.error(res.error)
-          }
+          this.props.error(res.error)
         }
       }
-    )
+    })
   }
   onUsernameChange (event) {
     const username = event.target.value
@@ -228,7 +222,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     activeConnection: stateProps.activeConnection,
     activeConnectionData: stateProps.activeConnectionData,
     storeCredentials: stateProps.storeCredentials,
-    useHttpConnection: stateProps.useHttpConnection,
     ...ownProps,
     ...dispatchProps,
     executeInitCmd: () => {
