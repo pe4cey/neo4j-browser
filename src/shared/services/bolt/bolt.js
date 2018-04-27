@@ -38,6 +38,12 @@ let connectionProperties = null
 let boltWorkerRegister = {}
 let cancellationRegister = {}
 
+const extractProtocol = meta => {
+  const host =
+    (meta && meta.host) || (connectionProperties && connectionProperties.host)
+  return boltConnection.getProtocol(host)
+}
+
 function openConnection (props, opts = {}, onLostConnection) {
   return new Promise((resolve, reject) => {
     boltConnection
@@ -74,7 +80,8 @@ function routedWriteTransaction (input, parameters, requestMetaData = {}) {
     cancelable = false,
     onLostConnection = () => {}
   } = requestMetaData
-  if (useCypherThread && window.Worker) {
+  const protocol = extractProtocol(requestMetaData)
+  if (useCypherThread && window.Worker && !protocol.includes('http')) {
     const id = requestId || v4()
     const workFn = runCypherMessage(
       input,
@@ -84,7 +91,8 @@ function routedWriteTransaction (input, parameters, requestMetaData = {}) {
       cancelable,
       {
         ...connectionProperties,
-        inheritedUseRouting: boltConnection.useRouting()
+        inheritedUseRouting: boltConnection.useRouting(),
+        protocol
       }
     )
     const workerPromise = setupBoltWorker(id, workFn, onLostConnection)
@@ -107,7 +115,8 @@ function routedReadTransaction (input, parameters, requestMetaData = {}) {
     cancelable = false,
     onLostConnection = () => {}
   } = requestMetaData
-  if (useCypherThread && window.Worker) {
+  const protocol = extractProtocol(requestMetaData)
+  if (useCypherThread && window.Worker && !protocol.includes('http')) {
     const id = requestId || v4()
     const workFn = runCypherMessage(
       input,
@@ -117,7 +126,8 @@ function routedReadTransaction (input, parameters, requestMetaData = {}) {
       cancelable,
       {
         ...connectionProperties,
-        inheritedUseRouting: boltConnection.useRouting()
+        inheritedUseRouting: boltConnection.useRouting(),
+        protocol
       }
     )
     const workerPromise = setupBoltWorker(id, workFn, onLostConnection)
@@ -132,11 +142,6 @@ function routedReadTransaction (input, parameters, requestMetaData = {}) {
   }
 }
 
-const getProtocol = (url, routing) => {
-  if (routing) return 'bolt+routing://'
-  return url.match(/^(.*:\/\/)/)[0]
-}
-
 function directTransaction (input, parameters, requestMetaData = {}) {
   const {
     useCypherThread = false,
@@ -144,7 +149,8 @@ function directTransaction (input, parameters, requestMetaData = {}) {
     cancelable = false,
     onLostConnection = () => {}
   } = requestMetaData
-  if (useCypherThread && window.Worker) {
+  const protocol = extractProtocol(requestMetaData)
+  if (useCypherThread && window.Worker && !protocol.includes('http')) {
     const id = requestId || v4()
     const workFn = runCypherMessage(
       input,
@@ -155,7 +161,7 @@ function directTransaction (input, parameters, requestMetaData = {}) {
       {
         ...connectionProperties,
         inheritedUseRouting: false,
-        protocol: getProtocol(connectionProperties.host)
+        protocol
       }
     )
     const workerPromise = setupBoltWorker(id, workFn, onLostConnection)

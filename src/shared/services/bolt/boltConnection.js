@@ -58,7 +58,8 @@ const validateConnection = (driver, res, rej) => {
     })
 }
 
-const getProtocol = (url, routing) => {
+export const getProtocol = (url, routing) => {
+  if (!url) return ''
   if (routing) return 'bolt+routing://'
   return url.match(/^(.*:\/\/)/)[0]
 }
@@ -172,6 +173,7 @@ export function openConnection (props, opts = {}, onLostConnection) {
     }
     const myReject = err => {
       _drivers = null
+
       driversObj.close()
       reject(err)
     }
