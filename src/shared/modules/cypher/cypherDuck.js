@@ -26,6 +26,8 @@ import { getCausalClusterAddresses } from './queriesProcedureHelper'
 import { getEncryptionMode } from 'services/bolt/boltHelpers'
 import { flatten } from 'services/utils'
 import { shouldUseCypherThread } from 'shared/modules/settings/settingsDuck'
+import remote from 'services/remote'
+import { authHeaderFromCredentials } from 'services/remoteUtils'
 
 const NAME = 'cypher'
 export const CYPHER_REQUEST = NAME + '/REQUEST'
@@ -145,24 +147,69 @@ export const clusterCypherRequestEpic = (some$, store) =>
       }
     })
 
+const driverDirectConnection = (action, resolve) => {
+  bolt
+    .directConnect(
+      action,
+      { encrypted: getEncryptionMode(action) },
+      undefined,
+      false // Ignore validation errors
+    )
+    .then(driver => {
+      adHocSession(driver, resolve, action)
+    })
+    .catch(e => {
+      resolve({ type: action.$$responseChannel, success: false, error: e })
+    })
+}
+
 // We need this because this is the only case where we still
 // want to execute cypher even though we get an connection error back
 export const handleForcePasswordChangeEpic = (some$, store) =>
   some$.ofType(FORCE_CHANGE_PASSWORD).mergeMap(action => {
     if (!action.$$responseChannel) return Rx.Observable.of(null)
-    return new Promise((resolve, reject) => {
-      bolt
-        .directConnect(
-          action,
-          { encrypted: getEncryptionMode(action) },
-          undefined,
-          false // Ignore validation errors
-        )
-        .then(driver => {
-          adHocSession(driver, resolve, action)
-        })
-        .catch(e =>
-          resolve({ type: action.$$responseChannel, success: false, error: e })
-        )
-    })
+    if (!action.host.startsWith('bolt://')) {
+      const authHeaders = {
+        Authorization:
+          'Basic ' + authHeaderFromCredentials(action.username, 'neo4j')
+      }
+      return new Promise(resolve => {
+        remote
+          .request(
+            'POST',
+            action.host + '/user/' + action.username + '/password',
+            JSON.stringify({ password: action.parameters.password }),
+            authHeaders
+          )
+          .then(res => {
+            if (res.ok) {
+              driverDirectConnection(
+                {
+                  ...action,
+                  query: 'RETURN 1',
+                  password: action.parameters.password,
+                  parameters: null
+                },
+                resolve
+              )
+            } else {
+              return resolve({
+                type: action.$$responseChannel,
+                success: false,
+                error: res.status
+              })
+            }
+          })
+          .catch(e => {
+            return resolve({
+              type: action.$$responseChannel,
+              success: false,
+              error: e
+            })
+          })
+      })
+    }
+    return new Promise((resolve, reject) =>
+      driverDirectConnection(action, resolve)
+    )
   })
