@@ -23,6 +23,7 @@
     "lint": "eslint --fix --ext .js --ext .jsx ./",
     "test": "npm run lint && jest",
     "e2e": "cypress run",
+    "e2e-open": "cypress open",
     "e2e-local": "CYPRESS_E2E_TEST_ENV=\"local\" cypress run",
     "e2e-local-open": "CYPRESS_E2E_TEST_ENV=\"local\" cypress open",
     "dev": "jest --watch",

@@ -3,18 +3,19 @@ const ClearEditorButton = '[data-test-id="clearEditorContent"]'
 const Editor = '.ReactCodeMirror textarea'
 
 /* global Cypress, cy */
-
 Cypress.Commands.add('setInitialPassword', newPassword => {
   if (Cypress.env('E2E_TEST_ENV') === 'local') {
     // We assume pw already set on local
     return
   }
+  const boltAddress = Cypress.env('BOLT_HOST') || 'bolt://localhost:7687'
+
   cy.title().should('include', 'Neo4j Browser')
 
   cy
     .get('input[data-test-id="boltaddress"]')
     .clear()
-    .type('bolt://localhost:7687')
+    .type(boltAddress)
 
   cy.get('input[data-test-id="username"]').should('have.value', 'neo4j')
   cy.get('input[data-test-id="password"]').should('have.value', '')
@@ -46,11 +47,13 @@ Cypress.Commands.add('setInitialPassword', newPassword => {
     .should('contain', ':play start')
 })
 Cypress.Commands.add('connect', password => {
+  const boltAddress = Cypress.env('BOLT_HOST') || 'bolt://localhost:7687'
+
   cy.title().should('include', 'Neo4j Browser')
   cy
     .get('input[data-test-id="boltaddress"]')
     .clear()
-    .type('bolt://localhost:7687')
+    .type(boltAddress)
 
   cy.get('input[data-test-id="username"]').should('have.value', 'neo4j')
   cy.get('input[data-test-id="password"]').should('have.value', '')
