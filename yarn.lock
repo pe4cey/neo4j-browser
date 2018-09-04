@@ -9470,6 +9470,10 @@ xmlhttprequest@1.8.0:
   version "1.8.0"
   resolved "https://neo.jfrog.io/neo/api/npm/npm/xmlhttprequest/-/xmlhttprequest-1.8.0.tgz#67fe075c5c24fef39f9d65f5f7b7fe75171968fc"
 
+xstate@^4.0.0-0:
+  version "4.0.0-0"
+  resolved "https://neo.jfrog.io/neo/api/npm/npm/xstate/-/xstate-4.0.0-0.tgz#18f728108c8a50a6b9861e0d46a1d4585f9dd776"
+
 xtend@^4.0.0, xtend@~4.0.1:
   version "4.0.1"
   resolved "https://neo.jfrog.io/neo/api/npm/npm/xtend/-/xtend-4.0.1.tgz#a5c6d532be656e23db820efb943a1f04998d63af"

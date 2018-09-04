@@ -20,6 +20,7 @@
 
 /* eslint-disable no-octal-escape */
 import React, { Component } from 'react'
+import { Machine } from 'xstate'
 import { connect } from 'react-redux'
 import { withBus } from 'react-suber'
 import uuid from 'uuid'
@@ -64,18 +65,38 @@ const shouldCheckForHints = code =>
     .startsWith('PROFILE')
 
 export class Editor extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      historyIndex: -1,
-      buffer: '',
-      mode: 'cypher',
-      notifications: [],
-      expanded: false,
-      lastPosition: { line: 0, column: 0 },
-      contentId: null,
-      editorHeight: 0
+  machine = Machine({
+    initial: 'collapse',
+    states: {
+      expand: {
+        on: {
+          SWITCH: 'collapse'
+        }
+      },
+      collapse: {
+        on: {
+          SWITCH: 'expand'
+        }
+      }
     }
+  })
+  state = {
+    historyIndex: -1,
+    buffer: '',
+    mode: 'cypher',
+    notifications: [],
+    lastPosition: { line: 0, column: 0 },
+    contentId: null,
+    editorHeight: 0,
+    expanded: this.machine.initialState
+  }
+
+  send (event) {
+    const nextState = this.machine.transition(this.state.expanded, event)
+
+    this.setState({
+      expanded: nextState.value
+    })
   }
   shouldComponentUpdate (nextProps, nextState) {
     return !(
@@ -92,7 +113,7 @@ export class Editor extends Component {
   }
 
   expandEditorToggle () {
-    this.setState({ expanded: !this.state.expanded })
+    this.send('SWITCH')
   }
 
   clearEditor () {
@@ -118,7 +139,7 @@ export class Editor extends Component {
       notifications: [],
       historyIndex: -1,
       buffer: null,
-      expanded: false
+      expanded: 'collapse'
     })
   }
 
@@ -354,11 +375,14 @@ export class Editor extends Component {
     }
 
     this.setGutterMarkers()
-
     return (
-      <Bar expanded={this.state.expanded} minHeight={this.state.editorHeight}>
+      <Bar
+        expanded={this.state.expanded === 'expand'}
+        minHeight={this.state.editorHeight}
+      >
+        <button onClick={this.expandEditorToggle.bind(this)}>Toggle</button>
         <EditorWrapper
-          expanded={this.state.expanded}
+          expanded={this.state.expanded === 'expand'}
           minHeight={this.state.editorHeight}
         >
           <Codemirror
