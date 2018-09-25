@@ -21,6 +21,7 @@
 import React, { Component } from 'react'
 import { v4 } from 'uuid'
 import { v1 as neo4j } from 'neo4j-driver-alias'
+import DmsCoordinates from 'dms-conversion'
 import {
   StyledStatsBar,
   PaddedTableViewDiv,
@@ -57,8 +58,53 @@ const renderCell = entry => {
     return stringifyMod(entry, stringFormat, true)
   }
 }
+const hrefPoints = entry => {
+  const { latitude, longitude } = new DmsCoordinates(
+    entry.x,
+    entry.y
+  ).getDmsArrays()
+  const params = [...latitude, ...longitude].join('_')
+
+  const href = `https://tools.wmflabs.org/geohack/geohack.php?params=${params}`
+  return (
+    <a target='_blank' href={href}>
+      <StyledJsonPre>{stringifyMod(entry, stringFormat, true)}</StyledJsonPre>
+    </a>
+  )
+}
 export const renderObject = entry => {
+  window.neo4j = neo4j
   if (neo4j.isInt(entry)) return entry.toString()
+
+  if (Object.keys(entry).map(p => neo4j.isPoint(entry[p])).length > 0) {
+    return Object.keys(entry).map(e => {
+      if (neo4j.isPoint(entry[e])) {
+        return hrefPoints(entry[e])
+      } else {
+        if (entry[e] === null) return <em>null</em>
+        return (
+          <StyledJsonPre>
+            {stringifyMod(entry[e], stringFormat, true)}
+          </StyledJsonPre>
+        )
+      }
+    })
+  }
+  if (entry.loc && neo4j.isPoint(entry.loc)) {
+    const { latitude, longitude } = new DmsCoordinates(
+      entry.loc.x,
+      entry.loc.y
+    ).getDmsArrays()
+    const params = [...latitude, ...longitude].join('_')
+
+    const href = `https://tools.wmflabs.org/geohack/geohack.php?params=${params}`
+    return (
+      <a target='_blank' href={href}>
+        <StyledJsonPre>{stringifyMod(entry, stringFormat, true)}</StyledJsonPre>
+      </a>
+    )
+  }
+
   if (entry === null) return <em>null</em>
   return (
     <StyledJsonPre>{stringifyMod(entry, stringFormat, true)}</StyledJsonPre>
