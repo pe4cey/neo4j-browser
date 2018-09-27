@@ -20,14 +20,14 @@
 import React from 'react'
 import styles from './style.css'
 import { StyledSlide } from './styled.jsx'
+import { Parser as HtmlToReactParser } from 'html-to-react'
 
 const Slide = React.forwardRef(({ html }, ref) => {
+  const htmlToReactParser = new HtmlToReactParser()
   return (
-    <StyledSlide
-      innerRef={ref}
-      className={styles.slide}
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
+    <StyledSlide innerRef={ref} className={styles.slide}>
+      {htmlToReactParser.parse(html)}
+    </StyledSlide>
   )
 })
 
