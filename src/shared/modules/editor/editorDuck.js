@@ -45,12 +45,26 @@ export const populateEditorFromUrlEpic = (some$, store) => {
     .delay(1) // Timing issue. Needs to be detached like this
     .mergeMap(action => {
       if (!action.url) return Rx.Observable.never()
-      const cmdParam = getUrlParamValue('cmd', action.url)
-      if (!cmdParam || cmdParam[0] !== 'play') return Rx.Observable.never()
-      const cmdCommand = getSettings(store.getState()).cmdchar + cmdParam[0]
-      const cmdArgs =
-        getUrlParamValue('arg', decodeURIComponent(action.url)) || []
-      const fullCommand = `${cmdCommand} ${cmdArgs.join(' ')}`
-      return Rx.Observable.of({ type: SET_CONTENT, ...setContent(fullCommand) })
+      const queryParam = getUrlParamValue('query', action.url)
+      if (queryParam) {
+        const query = decodeURIComponent(queryParam.join()).trim()
+        console.log('query', query)
+        return Rx.Observable.of({
+          type: SET_CONTENT,
+          ...setContent(query)
+        })
+      } else {
+        const cmdParam = getUrlParamValue('cmd', action.url)
+        // const queryParam = getUrlParamValue('cmd', action.url)
+        if (!cmdParam || cmdParam[0] !== 'play') return Rx.Observable.never()
+        const cmdCommand = getSettings(store.getState()).cmdchar + cmdParam[0]
+        const cmdArgs =
+          getUrlParamValue('arg', decodeURIComponent(action.url)) || []
+        const fullCommand = `${cmdCommand} ${cmdArgs.join(' ')}`
+        return Rx.Observable.of({
+          type: SET_CONTENT,
+          ...setContent(fullCommand)
+        })
+      }
     })
 }
